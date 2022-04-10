@@ -1,129 +1,84 @@
+### Gradle ###
+.gradle
+build/
+classes/
 
-# Created by https://www.toptal.com/developers/gitignore/api/git,intellij
-# Edit at https://www.toptal.com/developers/gitignore?templates=git,intellij
+# Ignore Gradle GUI config
+gradle-app.setting
 
-### Git ###
-# Created by git for backups. To disable backups in Git:
-# $ git config --global mergetool.keepBackup false
-*.orig
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
 
-# Created by git when using merge tools for conflicts
-*.BACKUP.*
-*.BASE.*
-*.LOCAL.*
-*.REMOTE.*
-*_BACKUP_*.txt
-*_BASE_*.txt
-*_LOCAL_*.txt
-*_REMOTE_*.txt
 
 ### Intellij ###
-# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
-# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+# User-specific stuff:
+.idea/
 
-# User-specific stuff
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/**/usage.statistics.xml
-.idea/**/dictionaries
-.idea/**/shelf
-
-# AWS User-specific
-.idea/**/aws.xml
-
-# Generated files
-.idea/**/contentModel.xml
-
-# Sensitive or high-churn files
-.idea/**/dataSources/
-.idea/**/dataSources.ids
-.idea/**/dataSources.local.xml
-.idea/**/sqlDataSources.xml
-.idea/**/dynamic.xml
-.idea/**/uiDesigner.xml
-.idea/**/dbnavigator.xml
-
-# Gradle
-.idea/**/gradle.xml
-.idea/**/libraries
-
-# Gradle and Maven with auto-import
-# When using Gradle or Maven with auto-import, you should exclude module files,
-# since they will be recreated, and may cause churn.  Uncomment if using
-# auto-import.
-# .idea/artifacts
-# .idea/compiler.xml
-# .idea/jarRepositories.xml
-# .idea/modules.xml
-# .idea/*.iml
-# .idea/modules
-# *.iml
-# *.ipr
-
-# CMake
-cmake-build-*/
-
-# Mongo Explorer plugin
-.idea/**/mongoSettings.xml
-
-# File-based project format
+## File-based project format:
 *.iws
+*.iml
+*.ipr
+
+## Plugin-specific files:
 
 # IntelliJ
-out/
+/out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
-# JIRA plugin
-atlassian-ide-plugin.xml
 
-# Cursive Clojure plugin
-.idea/replstate.xml
+### Eclipse ###
 
-# SonarLint plugin
-.idea/sonarlint/
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
 
-# Crashlytics plugin (for Android Studio and IntelliJ)
-com_crashlytics_export_strings.xml
-crashlytics.properties
-crashlytics-build.properties
-fabric.properties
+# Eclipse Core
+.project
 
-# Editor-based Rest Client
-.idea/httpRequests
+# External tool builders
+.externalToolBuilders/
 
-# Android studio 3.1+ serialized cache file
-.idea/caches/build_file_checksums.ser
+# Locally stored "Eclipse launch configurations"
+*.launch
 
-### Intellij Patch ###
-# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+# PyDev specific (Python IDE for Eclipse)
+*.pydevproject
 
-# *.iml
-# modules.xml
-# .idea/misc.xml
-# *.ipr
+# CDT-specific (C/C++ Development Tooling)
+.cproject
 
-# Sonarlint plugin
-# https://plugins.jetbrains.com/plugin/7973-sonarlint
-.idea/**/sonarlint/
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
 
-# SonarQube Plugin
-# https://plugins.jetbrains.com/plugin/7238-sonarqube-community-plugin
-.idea/**/sonarIssues.xml
+# Java annotation processor (APT)
+.factorypath
 
-# Markdown Navigator plugin
-# https://plugins.jetbrains.com/plugin/7896-markdown-navigator-enhanced
-.idea/**/markdown-navigator.xml
-.idea/**/markdown-navigator-enh.xml
-.idea/**/markdown-navigator/
+# PDT-specific (PHP Development Tools)
+.buildpath
 
-# Cache file creation bug
-# See https://youtrack.jetbrains.com/issue/JBR-2257
-.idea/$CACHE_FILE$
+# sbteclipse plugin
+.target
 
-# CodeStream plugin
-# https://plugins.jetbrains.com/plugin/12206-codestream
-.idea/codestream.xml
+# Tern plugin
+.tern-project
 
-# End of https://www.toptal.com/developers/gitignore/api/git,intellij
+# TeXlipse plugin
+.texlipse
+
+# STS (Spring Tool Suite)
+.springBeans
+
+# Code Recommenders
+.recommenders/
+
+### Artifactory credentials ###
+gradle.properties
