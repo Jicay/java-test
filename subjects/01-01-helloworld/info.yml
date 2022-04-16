@@ -1,0 +1,7 @@
+exercise:
+  name: HelloWorld
+  quest: 1
+  index: 1
+  files-from-student:
+    - HelloWorld.java
+  test-folder: HelloWorldTest

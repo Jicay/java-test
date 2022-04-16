@@ -6,10 +6,8 @@ class HelloWorldTest {
 
     @Test
     void helloWorld() {
-        HelloWorld helloWorld = new HelloWorld();
+        String res = HelloWorld.helloWorld();
 
-        String res = helloWorld.helloWorld();
-
-        assertThat(res).isEqualTo("Hello world");
+        assertThat(res).isEqualTo("Hello World !");
     }
 }

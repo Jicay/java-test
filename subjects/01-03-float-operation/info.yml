@@ -1,0 +1,7 @@
+exercise:
+  name: FloatOperation
+  quest: 1
+  index: 3
+  files-from-student:
+    - FloatOperation.java
+  test-folder: FloatOperationTest

@@ -1,0 +1,7 @@
+exercise:
+  name: StringLength
+  quest: 1
+  index: 6
+  files-from-student:
+    - StringLength.java
+  test-folder: StringLengthTest

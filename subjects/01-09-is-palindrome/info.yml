@@ -1,0 +1,7 @@
+exercise:
+  name: Palindrome
+  quest: 1
+  index: 9
+  files-from-student:
+    - Palindrome.java
+  test-folder: PalindromeTest

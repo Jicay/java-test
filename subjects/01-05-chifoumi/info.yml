@@ -1,0 +1,8 @@
+exercise:
+  name: Chifoumi
+  quest: 1
+  index: 5
+  files-from-student:
+    - Chifoumi.java
+    - ChifoumiAction.java
+  test-folder: ChifoumiTest

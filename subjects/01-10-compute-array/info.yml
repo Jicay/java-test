@@ -1,0 +1,7 @@
+exercise:
+  name: ComputeArray
+  quest: 1
+  index: 10
+  files-from-student:
+    - ComputeArray.java
+  test-folder: ComputeArray

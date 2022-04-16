@@ -1,0 +1,7 @@
+exercise:
+  name: StringContain
+  quest: 1
+  index: 8
+  files-from-student:
+    - StringContain.java
+  test-folder: StringContainTest

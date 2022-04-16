@@ -6,7 +6,11 @@ cd /jail
 
 mkdir project
 
-cp -rf /app/setup/src ./project
+mkdir project/src
+mkdir project/src/main
+mkdir project/src/main/java
+mkdir project/src/test
+mkdir project/src/test/java
 
 cp -rf ./student/*.java ./project/src/main/java
 

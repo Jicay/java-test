@@ -1,0 +1,7 @@
+exercise:
+  name: StringConcat
+  quest: 1
+  index: 7
+  files-from-student:
+    - StringConcat.java
+  test-folder: StringConcatTest

@@ -1,0 +1,7 @@
+exercise:
+  name: IsEven
+  quest: 1
+  index: 4
+  files-from-student:
+    - IsEven.java
+  test-folder: IsEvenTest

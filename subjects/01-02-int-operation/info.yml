@@ -1,0 +1,7 @@
+exercise:
+  name: IntOperation
+  quest: 1
+  index: 2
+  files-from-student:
+    - IntOperation.java
+  test-folder: IntOperationTest
