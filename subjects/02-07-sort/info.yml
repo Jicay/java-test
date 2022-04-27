@@ -1,0 +1,7 @@
+exercise:
+  name: Sort
+  quest: 2
+  index: 7
+  files-from-student:
+    - Sort.java
+  test-folder: SortTest

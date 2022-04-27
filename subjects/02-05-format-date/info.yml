@@ -1,0 +1,7 @@
+exercise:
+  name: FormatDate
+  quest: 2
+  index: 5
+  files-from-student:
+    - FormatDate.java
+  test-folder: FormatDateTest

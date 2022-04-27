@@ -1,0 +1,7 @@
+exercise:
+  name: KeepTheChange
+  quest: 2
+  index: 8
+  files-from-student:
+    - KeepTheChange.java
+  test-folder: KeepTheChangeTest

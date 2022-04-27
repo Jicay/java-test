@@ -1,0 +1,7 @@
+exercise:
+  name: ListSearchIndex
+  quest: 2
+  index: 2
+  files-from-student:
+    - ListSearchIndex.java
+  test-folder: ListSearchIndexTest

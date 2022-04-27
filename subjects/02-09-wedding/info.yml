@@ -1,0 +1,7 @@
+exercise:
+  name: Wedding
+  quest: 2
+  index: 9
+  files-from-student:
+    - Wedding.java
+  test-folder: WeddingTest

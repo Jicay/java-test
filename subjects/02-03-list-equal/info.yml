@@ -1,0 +1,7 @@
+exercise:
+  name: ListEqual
+  quest: 2
+  index: 3
+  files-from-student:
+    - ListEqual.java
+  test-folder: ListEqualTest

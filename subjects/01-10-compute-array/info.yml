@@ -4,4 +4,4 @@ exercise:
   index: 10
   files-from-student:
     - ComputeArray.java
-  test-folder: ComputeArray
+  test-folder: ComputeArrayTest

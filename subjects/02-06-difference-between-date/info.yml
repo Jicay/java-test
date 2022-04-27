@@ -1,0 +1,7 @@
+exercise:
+  name: DifferenceBetweenDate
+  quest: 2
+  index: 6
+  files-from-student:
+    - DifferenceBetweenDate.java
+  test-folder: DifferenceBetweenDateTest

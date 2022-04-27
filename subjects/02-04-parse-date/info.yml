@@ -1,0 +1,7 @@
+exercise:
+  name: ParseDate
+  quest: 2
+  index: 4
+  files-from-student:
+    - ParseDate.java
+  test-folder: ParseDateTest
