@@ -1,0 +1,8 @@
+exercise:
+  name: StarInheritance
+  quest: 3
+  index: 6
+  files-from-student:
+    - CelestialObject.java
+    - Star.java
+  test-folder: StarInheritanceTest

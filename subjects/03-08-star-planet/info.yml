@@ -1,0 +1,9 @@
+exercise:
+  name: StarPlanet
+  quest: 3
+  index: 8
+  files-from-student:
+    - CelestialObject.java
+    - Star.java
+    - Planet.java
+  test-folder: StarPlanetTest

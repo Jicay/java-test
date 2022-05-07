@@ -1,0 +1,10 @@
+exercise:
+  name: StarMass
+  quest: 3
+  index: 10
+  files-from-student:
+    - CelestialObject.java
+    - Star.java
+    - Planet.java
+    - Galaxy.java
+  test-folder: StarMassTest

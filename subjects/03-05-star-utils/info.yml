@@ -1,0 +1,7 @@
+exercise:
+  name: StarUtils
+  quest: 3
+  index: 5
+  files-from-student:
+    - CelestialObject.java
+  test-folder: StarUtilsTest

@@ -1,0 +1,7 @@
+exercise:
+  name: StarGetters
+  quest: 3
+  index: 3
+  files-from-student:
+    - CelestialObject.java
+  test-folder: StarGettersTest

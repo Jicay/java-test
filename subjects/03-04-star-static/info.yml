@@ -1,0 +1,7 @@
+exercise:
+  name: StarStatic
+  quest: 3
+  index: 4
+  files-from-student:
+    - CelestialObject.java
+  test-folder: StarStaticTest

@@ -1,0 +1,10 @@
+exercise:
+  name: StarGalaxy
+  quest: 3
+  index: 9
+  files-from-student:
+    - CelestialObject.java
+    - Star.java
+    - Planet.java
+    - Galaxy.java
+  test-folder: StarGalaxyTest

@@ -1,0 +1,8 @@
+exercise:
+  name: StarOverride
+  quest: 3
+  index: 7
+  files-from-student:
+    - CelestialObject.java
+    - Star.java
+  test-folder: StarOverrideTest
