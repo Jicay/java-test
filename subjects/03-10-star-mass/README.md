@@ -51,3 +51,7 @@ $ java -cp build ExerciseRunner
 {Star=6159592, Planet=65703, Other=4144}
 $ 
 ```
+
+# Notions
+
+[InstanceOf](https://www.baeldung.com/java-instanceof)
