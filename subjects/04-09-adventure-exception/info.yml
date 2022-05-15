@@ -1,0 +1,13 @@
+exercise:
+  name: AdventureWeapon
+  quest: 4
+  index: 8
+  files-from-student:
+    - Character.java
+    - Monster.java
+    - Tank.java
+    - Healer.java
+    - Sorcerer.java
+    - Templar.java
+    - Weapon.java
+  test-folder: AdventureWeaponTest

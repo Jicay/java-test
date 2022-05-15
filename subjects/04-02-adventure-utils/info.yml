@@ -1,0 +1,7 @@
+exercise:
+  name: AdventureCharacter
+  quest: 4
+  index: 1
+  files-from-student:
+    - Character.java
+  test-folder: AdventureCharacterTest

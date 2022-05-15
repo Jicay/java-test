@@ -1,0 +1,8 @@
+exercise:
+  name: AdventureMonster
+  quest: 4
+  index: 3
+  files-from-student:
+    - Character.java
+    - Monster.java
+  test-folder: AdventureMonsterTest

@@ -1,0 +1,11 @@
+exercise:
+  name: AdventureSorcerer
+  quest: 4
+  index: 5
+  files-from-student:
+    - Character.java
+    - Monster.java
+    - Tank.java
+    - Healer.java
+    - Sorcerer.java
+  test-folder: AdventureSorcererTest
