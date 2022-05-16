@@ -1,7 +1,7 @@
 exercise:
   name: AdventureCatch
   quest: 4
-  index: 9
+  index: 10
   files-from-student:
     - Character.java
     - Monster.java
