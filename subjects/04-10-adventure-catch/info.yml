@@ -1,5 +1,5 @@
 exercise:
-  name: AdventureException
+  name: AdventureCatch
   quest: 4
   index: 9
   files-from-student:
@@ -11,4 +11,4 @@ exercise:
     - Templar.java
     - Weapon.java
     - DeadCharacterException.java
-  test-folder: AdventureExceptionTest
+  test-folder: AdventureCatchTest

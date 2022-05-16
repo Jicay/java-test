@@ -11,13 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class AdventureTemplarTest {
+class AdventureAbstractTest {
 
     @Test
     void class_shouldBePublic() {
         assertThat(Character.class)
                 .withFailMessage("Character should be public")
                 .isPublic();
+        assertThat(Character.class)
+                .withFailMessage("Character should be abstract")
+                .isAbstract();
     }
 
     @Test
@@ -139,6 +142,9 @@ class AdventureTemplarTest {
             assertThat(Modifier.isPublic(getter.getModifiers()))
                     .withFailMessage("attack method should be public")
                     .isTrue();
+            assertThat(Modifier.isAbstract(getter.getModifiers()))
+                    .withFailMessage("attack method should be abstract")
+                    .isTrue();
             assertThat(getter.getReturnType())
                     .withFailMessage("attack method should return nothing")
                     .isEqualTo(void.class);
@@ -149,6 +155,9 @@ class AdventureTemplarTest {
             Method getter = Character.class.getDeclaredMethod("takeDamage", int.class);
             assertThat(Modifier.isPublic(getter.getModifiers()))
                     .withFailMessage("takeDamage method should be public")
+                    .isTrue();
+            assertThat(Modifier.isAbstract(getter.getModifiers()))
+                    .withFailMessage("takeDamage method should be abstract")
                     .isTrue();
             assertThat(getter.getReturnType())
                     .withFailMessage("takeDamage method should return nothing")
@@ -195,6 +204,9 @@ class AdventureTemplarTest {
         assertThat(Monster.class)
                 .withFailMessage("Monster should be public")
                 .isPublic();
+        assertThat(Monster.class.getSuperclass())
+                .withFailMessage("Monster should inherit Character")
+                .isEqualTo(Character.class);
     }
 
     @Test
@@ -371,83 +383,119 @@ class AdventureTemplarTest {
     }
 
     @Test
-    void objectTemplar_instantiationAndToString() {
+    void objectMonster_attackAndTakeDamage() {
         try {
-            Field allCharacters = Character.class.getDeclaredField("allCharacters");
-            allCharacters.setAccessible(true);
-            allCharacters.set(null, new ArrayList<>());
-            allCharacters.setAccessible(false);
-
-            Method printStatus = Character.class.getDeclaredMethod("printStatus");
-            Method getName = Character.class.getDeclaredMethod("getName");
             Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
-            Method getMaxHealth = Character.class.getDeclaredMethod("getMaxHealth");
-            Method getHealCapacity = Templar.class.getDeclaredMethod("getHealCapacity");
-            Method getShield = Templar.class.getDeclaredMethod("getShield");
             Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
+            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
 
-            Constructor<Templar> constructor = Templar.class.getConstructor(String.class, int.class, int.class, int.class);
-            Templar dumbledore = constructor.newInstance("Dumbledore", 30, 8, 4);
-            Templar ronWeasley = constructor.newInstance("Ron Weasley", 10, 1, 2);
+            Constructor<Monster> constructor = Monster.class.getConstructor(String.class, int.class);
+            Constructor<Sorcerer> constructorSorcerer = Sorcerer.class.getConstructor(String.class, int.class, int.class);
 
-            takeDamage.invoke(ronWeasley, 12);
+            Monster troll = constructor.newInstance("Troll", 20);
+            Sorcerer harryPotter = constructorSorcerer.newInstance("Harry Potter", 30, 4);
 
-            assertThat(getName.invoke(dumbledore)).isEqualTo("Dumbledore");
-            assertThat(getCurrentHealth.invoke(dumbledore)).isEqualTo(30);
-            assertThat(getMaxHealth.invoke(dumbledore)).isEqualTo(30);
-            assertThat(getHealCapacity.invoke(dumbledore)).isEqualTo(8);
-            assertThat(getShield.invoke(dumbledore)).isEqualTo(4);
-            assertThat(dumbledore.toString()).isEqualTo("Dumbledore is a strong Templar with 30 HP. It can heal 8 HP and has a shield of 4.");
+            takeDamage.invoke(troll, 10);
 
-            assertThat(getName.invoke(ronWeasley)).isEqualTo("Ron Weasley");
-            assertThat(getCurrentHealth.invoke(ronWeasley)).isEqualTo(0);
-            assertThat(getMaxHealth.invoke(ronWeasley)).isEqualTo(10);
-            assertThat(getHealCapacity.invoke(ronWeasley)).isEqualTo(1);
-            assertThat(getShield.invoke(ronWeasley)).isEqualTo(2);
-            assertThat(ronWeasley.toString()).isEqualTo("Ron Weasley has been beaten, even with its 2 shield. So bad, it could heal 1 HP.");
+            assertThat(getCurrentHealth.invoke(troll))
+                    .withFailMessage("After first takeDamage, currentHealth of monster should be 12, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(12);
 
-            String print = (String) printStatus.invoke(null);
+            takeDamage.invoke(troll, 8);
 
-            assertThat(print).isEqualTo("""
-                ------------------------------------------
-                Characters currently fighting :
-                 - Dumbledore is a strong Templar with 30 HP. It can heal 8 HP and has a shield of 4.
-                 - Ron Weasley has been beaten, even with its 2 shield. So bad, it could heal 1 HP.
-                ------------------------------------------""");
+            assertThat(getCurrentHealth.invoke(troll))
+                    .withFailMessage("After second takeDamage, currentHealth of monster should be 6, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(6);
 
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchFieldException e) {
-            fail("Templar is not correctly defined", e);
+            attack.invoke(troll, harryPotter);
+
+            assertThat(getCurrentHealth.invoke(harryPotter))
+                    .withFailMessage("After first attack, currentHealth of targetted sorcerer should be 23, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(23);
+            assertThat(getCurrentHealth.invoke(troll))
+                    .withFailMessage("After first attack, currentHealth of monster should be 6, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(6);
+
+            takeDamage.invoke(troll, 15);
+            assertThat(getCurrentHealth.invoke(troll))
+                    .withFailMessage("After last takeDamage, currentHealth of monster should be 0, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(0);
+
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            fail("Monster is not correctly defined", e);
         }
     }
 
     @Test
-    void objectTemplar_heal() {
+    void objectSorcerer_attackAndTakeDamage() {
         try {
-            Method heal = Templar.class.getDeclaredMethod("heal", Character.class);
+            Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
             Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
+            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
+
+            Constructor<Sorcerer> constructor = Sorcerer.class.getConstructor(String.class, int.class, int.class);
+
+            Sorcerer dragoMalefoy = constructor.newInstance("Drago Malefoy", 20, 2);
+            Sorcerer harryPotter = constructor.newInstance("Harry Potter", 30, 4);
+
+            takeDamage.invoke(harryPotter, 15);
+
+            assertThat(getCurrentHealth.invoke(harryPotter))
+                    .withFailMessage("After first takeDamage, currentHealth of templar should be 15, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(15);
+
+            attack.invoke(harryPotter, dragoMalefoy);
+
+            assertThat(getCurrentHealth.invoke(harryPotter))
+                    .withFailMessage("After first attack, currentHealth of sorcerer should be 19, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(19);
+            assertThat(getCurrentHealth.invoke(dragoMalefoy))
+                    .withFailMessage("After first attack, currentHealth of targetted sorcerer should be 10, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(10);
+
+            takeDamage.invoke(dragoMalefoy, 15);
+            assertThat(getCurrentHealth.invoke(dragoMalefoy))
+                    .withFailMessage("After last takeDamage, currentHealth of sorcerer should be 0, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(0);
+
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            fail("Sorcerer is not correctly defined", e);
+        }
+    }
+
+    @Test
+    void objectTemplar_attackAndTakeDamage() {
+        try {
+            Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
+            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
+            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
 
             Constructor<Templar> constructor = Templar.class.getConstructor(String.class, int.class, int.class, int.class);
-            Templar dumbledore = constructor.newInstance("Dumbledore", 30, 8, 3);
-            Templar ronWeasley = constructor.newInstance("Ron Weasley", 20, 1, 1);
+            Constructor<Sorcerer> constructorSorcerer = Sorcerer.class.getConstructor(String.class, int.class, int.class);
 
-            takeDamage.invoke(ronWeasley, 12);
+            Templar alistair = constructor.newInstance("Drago Malefoy", 20, 2, 3);
+            Sorcerer harryPotter = constructorSorcerer.newInstance("Harry Potter", 30, 4);
 
-            assertThat(ronWeasley.getCurrentHealth())
-                    .withFailMessage("The HP of Ron before healing should be 8")
+            takeDamage.invoke(alistair, 15);
+
+            assertThat(getCurrentHealth.invoke(alistair))
+                    .withFailMessage("After first takeDamage, currentHealth of templar should be 8, but was %d", getCurrentHealth.invoke(harryPotter))
                     .isEqualTo(8);
 
-            heal.invoke(dumbledore, ronWeasley);
+            attack.invoke(alistair, harryPotter);
 
-            assertThat(ronWeasley.getCurrentHealth())
-                    .withFailMessage("The HP of Ron after first healing should be 16")
-                    .isEqualTo(16);
+            assertThat(getCurrentHealth.invoke(harryPotter))
+                    .withFailMessage("After first attack, currentHealth of targetted sorcerer should be 24, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(24);
+            assertThat(getCurrentHealth.invoke(alistair))
+                    .withFailMessage("After first attack, currentHealth of templar should be 10, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(10);
 
-            heal.invoke(dumbledore, ronWeasley);
+            takeDamage.invoke(alistair, 20);
+            assertThat(getCurrentHealth.invoke(alistair))
+                    .withFailMessage("After last takeDamage, currentHealth of templar should be 0, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(0);
 
-            assertThat(ronWeasley.getCurrentHealth())
-                    .withFailMessage("The HP of Ron after last healing should be 20")
-                    .isEqualTo(20);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Templar is not correctly defined", e);
         }

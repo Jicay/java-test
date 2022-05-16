@@ -9,7 +9,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class AdventureWeaponTest {
+class AdventureExceptionTest {
 
     @Test
     void class_shouldBePublic() {
@@ -227,6 +227,9 @@ class AdventureWeaponTest {
         assertThat(Monster.class)
                 .withFailMessage("Monster should be public")
                 .isPublic();
+        assertThat(Monster.class.getSuperclass())
+                .withFailMessage("Monster should inherit Character")
+                .isEqualTo(Character.class);
     }
 
     @Test
@@ -480,46 +483,39 @@ class AdventureWeaponTest {
     }
 
     @Test
-    void objectWeapon_attackAndTakeDamage() {
+    void classException_shouldBePublic() {
+        assertThat(DeadCharacterException.class)
+                .withFailMessage("DeadCharacterException should be public")
+                .isPublic();
+        assertThat(DeadCharacterException.class.getSuperclass())
+                .withFailMessage("DeadCharacterException should inherit Exception")
+                .isEqualTo(Exception.class);
+    }
+
+    @Test
+    void classException_shouldHaveConstructor() {
         try {
-            Method getDamage = Weapon.class.getDeclaredMethod("getDamage");
-            Method getName = Weapon.class.getDeclaredMethod("getName");
-
-            Constructor<Weapon> constructor = Weapon.class.getConstructor(String.class, int.class);
-
-            Weapon excalibur = constructor.newInstance("Excalibur", 42);
-
-            assertThat(getName.invoke(excalibur))
-                    .withFailMessage("The name of the weapon should be Excelibur but was %s", getName.invoke(excalibur))
-                    .isEqualTo("Excalibur");
-            assertThat(getDamage.invoke(excalibur))
-                    .withFailMessage("The damage of the weapon should be 42 but was %d", getDamage.invoke(excalibur))
-                    .isEqualTo(42);
-            assertThat(excalibur.toString()).isEqualTo("Excalibur deals 42 damages");
-
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            fail("Weapon is not correctly defined", e);
+            Constructor<DeadCharacterException> constructor = DeadCharacterException.class.getConstructor(Character.class);
+            assertThat(Modifier.isPublic(constructor.getModifiers()))
+                    .withFailMessage("Full parameters constructor should be public")
+                    .isTrue();
+        } catch (NoSuchMethodException e) {
+            fail("DeadCharacterException should have a Character parameter constructor");
         }
     }
 
     @Test
-    void objectMonster_attackAndTakeDamage() {
+    void objectException_monster() {
         try {
-            Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
-            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
+            Method getMessage = DeadCharacterException.class.getDeclaredMethod("getMessage");
 
-            Constructor<Weapon> constructorWeapon = Weapon.class.getConstructor(String.class, int.class);
-            Constructor<Monster> constructor = Monster.class.getConstructor(String.class, int.class, Weapon.class);
-            Constructor<Sorcerer> constructorSorcerer = Sorcerer.class.getConstructor(String.class, int.class, int.class, Weapon.class);
+            Constructor<Monster> constructorMonster = Monster.class.getConstructor(String.class, int.class, Weapon.class);
+            Constructor<DeadCharacterException> constructor = DeadCharacterException.class.getConstructor(Character.class);
 
-            Monster troll = constructor.newInstance("Troll", 20, constructorWeapon.newInstance("Arc", 13));
-            Sorcerer harryPotter = constructorSorcerer.newInstance("Harry Potter", 30, 4, null);
+            Monster troll = constructorMonster.newInstance("Troll", 20, null);
+            DeadCharacterException exception = constructor.newInstance(troll);
 
-            attack.invoke(troll, harryPotter);
-
-            assertThat(getCurrentHealth.invoke(harryPotter))
-                    .withFailMessage("After attack with excalibur, currentHealth of sorcerer should be 17, but was %d", getCurrentHealth.invoke(harryPotter))
-                    .isEqualTo(17);
+            assertThat(getMessage.invoke(exception)).isEqualTo("The monster Troll is dead.");
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Monster is not correctly defined", e);
@@ -527,48 +523,34 @@ class AdventureWeaponTest {
     }
 
     @Test
-    void objectSorcerer_attackAndTakeDamage() {
+    void objectException_sorcerer() {
         try {
-            Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
-            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
+            Method getMessage = DeadCharacterException.class.getDeclaredMethod("getMessage");
 
-            Constructor<Weapon> constructorWeapon = Weapon.class.getConstructor(String.class, int.class);
-            Constructor<Sorcerer> constructor = Sorcerer.class.getConstructor(String.class, int.class, int.class, Weapon.class);
+            Constructor<Sorcerer> constructorSorcerer = Sorcerer.class.getConstructor(String.class, int.class, int.class, Weapon.class);
+            Constructor<DeadCharacterException> constructor = DeadCharacterException.class.getConstructor(Character.class);
 
-            Sorcerer dragoMalefoy = constructor.newInstance("Drago Malefoy", 20, 2, null);
-            Sorcerer harryPotter = constructor.newInstance("Harry Potter", 30, 4, constructorWeapon.newInstance("Baguette", 16));
+            Sorcerer saroumane = constructorSorcerer.newInstance("Saroumane", 20, 4, null);
+            DeadCharacterException exception = constructor.newInstance(saroumane);
 
-            attack.invoke(harryPotter, dragoMalefoy);
-
-            assertThat(getCurrentHealth.invoke(dragoMalefoy))
-                    .withFailMessage("After attack with Baguette, currentHealth of sorcerer should be 4, but was %d", getCurrentHealth.invoke(dragoMalefoy))
-                    .isEqualTo(4);
+            assertThat(getMessage.invoke(exception)).isEqualTo("The sorcerer Saroumane is dead.");
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Sorcerer is not correctly defined", e);
         }
     }
 
     @Test
-    void objectTemplar_attackAndTakeDamage() {
+    void objectException_templar() {
         try {
-            Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
-            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
-            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
+            Method getMessage = DeadCharacterException.class.getDeclaredMethod("getMessage");
 
-            Constructor<Weapon> constructorWeapon = Weapon.class.getConstructor(String.class, int.class);
-            Constructor<Templar> constructor = Templar.class.getConstructor(String.class, int.class, int.class, int.class, Weapon.class);
-            Constructor<Sorcerer> constructorSorcerer = Sorcerer.class.getConstructor(String.class, int.class, int.class, Weapon.class);
+            Constructor<Templar> constructorTemplar = Templar.class.getConstructor(String.class, int.class, int.class, int.class, Weapon.class);
+            Constructor<DeadCharacterException> constructor = DeadCharacterException.class.getConstructor(Character.class);
 
-            Templar alistair = constructor.newInstance("Alistair", 20, 2, 3, constructorWeapon.newInstance("Anduril", 21));
-            Sorcerer harryPotter = constructorSorcerer.newInstance("Harry Potter", 30, 4, null);
+            Templar lancelot = constructorTemplar.newInstance("Lacelot", 20, 4, 2, null);
+            DeadCharacterException exception = constructor.newInstance(lancelot);
 
-            attack.invoke(alistair, harryPotter);
-
-            assertThat(getCurrentHealth.invoke(harryPotter))
-                    .withFailMessage("After attack with Anduril, currentHealth of sorcerer should be 9, but was %d", getCurrentHealth.invoke(harryPotter))
-                    .isEqualTo(9);
-
-
+            assertThat(getMessage.invoke(exception)).isEqualTo("The templar Lacelot is dead.");
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Templar is not correctly defined", e);
         }

@@ -1,7 +1,7 @@
 exercise:
-  name: AdventureCharacter
+  name: AdventureUtils
   quest: 4
-  index: 1
+  index: 2
   files-from-student:
     - Character.java
-  test-folder: AdventureCharacterTest
+  test-folder: AdventureUtilsTest

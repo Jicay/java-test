@@ -1,7 +1,7 @@
 exercise:
-  name: StarProperties
-  quest: 3
+  name: AdventureCharacter
+  quest: 4
   index: 1
   files-from-student:
-    - CelestialObject.java
-  test-folder: StartPropertiesTest
+    - Character.java
+  test-folder: AdventureCharacterTest

@@ -1,4 +1,3 @@
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 
@@ -7,11 +6,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class AdventureAbstractTest {
+class AdventureWeaponTest {
 
     @Test
     void class_shouldBePublic() {
@@ -26,12 +24,12 @@ class AdventureAbstractTest {
     @Test
     void class_shouldHaveFullParameterConstructor() {
         try {
-            Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
+            Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class, Weapon.class);
             assertThat(Modifier.isPublic(constructor.getModifiers()))
                     .withFailMessage("Full parameters constructor should be public")
                     .isTrue();
         } catch (NoSuchMethodException e) {
-            fail("Character should have a String and int parameters constructor");
+            fail("Character should have a String, int and Weapon parameters constructor");
         }
     }
 
@@ -96,6 +94,20 @@ class AdventureAbstractTest {
         } catch (NoSuchFieldException e) {
             fail("Character should have a allCharacters property");
         }
+        try {
+            Field field = Character.class.getDeclaredField("weapon");
+            assertThat(Modifier.isPrivate(field.getModifiers()))
+                    .withFailMessage("weapon property should be private")
+                    .isTrue();
+            assertThat(Modifier.isStatic(field.getModifiers()))
+                    .withFailMessage("weapon property should not be static")
+                    .isFalse();
+            assertThat(field.getType())
+                    .withFailMessage("weapon property should be a Weapon, but was %s", field.getType())
+                    .isEqualTo(Weapon.class);
+        } catch (NoSuchFieldException e) {
+            fail("Character should have a weapon property");
+        }
     }
 
     @Test
@@ -132,6 +144,17 @@ class AdventureAbstractTest {
                     .isEqualTo(int.class);
         } catch (NoSuchMethodException e) {
             fail("Character should have getMaxHealth method");
+        }
+        try {
+            Method getter = Character.class.getDeclaredMethod("getWeapon");
+            assertThat(Modifier.isPublic(getter.getModifiers()))
+                    .withFailMessage("getWeapon method should be public")
+                    .isTrue();
+            assertThat(getter.getReturnType())
+                    .withFailMessage("getWeapon method should return Weapon")
+                    .isEqualTo(Weapon.class);
+        } catch (NoSuchMethodException e) {
+            fail("Character should have getWeapon method");
         }
     }
 
@@ -204,17 +227,20 @@ class AdventureAbstractTest {
         assertThat(Monster.class)
                 .withFailMessage("Monster should be public")
                 .isPublic();
+        assertThat(Monster.class.getSuperclass())
+                .withFailMessage("Monster should inherit Character")
+                .isEqualTo(Character.class);
     }
 
     @Test
     void classMonster_shouldHaveFullParameterConstructor() {
         try {
-            Constructor<Monster> constructor = Monster.class.getDeclaredConstructor(String.class, int.class);
+            Constructor<Monster> constructor = Monster.class.getDeclaredConstructor(String.class, int.class, Weapon.class);
             assertThat(Modifier.isPublic(constructor.getModifiers()))
                     .withFailMessage("Full parameters constructor should be public")
                     .isTrue();
         } catch (NoSuchMethodException e) {
-            fail("Monster should have a String and int parameters constructor");
+            fail("Monster should have a String, int and Weapon parameters constructor");
         }
     }
 
@@ -295,12 +321,12 @@ class AdventureAbstractTest {
     @Test
     void classSorcerer_shouldHaveConstructor() {
         try {
-            Constructor<Sorcerer> constructor = Sorcerer.class.getConstructor(String.class, int.class, int.class);
+            Constructor<Sorcerer> constructor = Sorcerer.class.getConstructor(String.class, int.class, int.class, Weapon.class);
             assertThat(Modifier.isPublic(constructor.getModifiers()))
                     .withFailMessage("Full parameters constructor should be public")
                     .isTrue();
         } catch (NoSuchMethodException e) {
-            fail("Sorcerer should have a String, int and int parameters constructor");
+            fail("Sorcerer should have a String, int, int and Weapon parameters constructor");
         }
     }
 
@@ -338,12 +364,12 @@ class AdventureAbstractTest {
     @Test
     void classTemplar_shouldHaveConstructor() {
         try {
-            Constructor<Templar> constructor = Templar.class.getConstructor(String.class, int.class, int.class, int.class);
+            Constructor<Templar> constructor = Templar.class.getConstructor(String.class, int.class, int.class, int.class, Weapon.class);
             assertThat(Modifier.isPublic(constructor.getModifiers()))
                     .withFailMessage("Full parameters constructor should be public")
                     .isTrue();
         } catch (NoSuchMethodException e) {
-            fail("Templar should have a String, int, int and int parameters constructor");
+            fail("Templar should have a String, int, int, int and Weapon parameters constructor");
         }
     }
 
@@ -380,33 +406,123 @@ class AdventureAbstractTest {
     }
 
     @Test
+    void classWeapon_shouldBePublic() {
+        assertThat(Weapon.class)
+                .withFailMessage("Weapon should be public")
+                .isPublic();
+    }
+
+    @Test
+    void classWeapon_shouldHaveConstructor() {
+        try {
+            Constructor<Weapon> constructor = Weapon.class.getConstructor(String.class, int.class);
+            assertThat(Modifier.isPublic(constructor.getModifiers()))
+                    .withFailMessage("Full parameters constructor should be public")
+                    .isTrue();
+        } catch (NoSuchMethodException e) {
+            fail("Weapon should have a String and int parameters constructor");
+        }
+    }
+
+    @Test
+    void classWeapon_shouldHaveCorrectProperties() {
+        try {
+            Field field = Weapon.class.getDeclaredField("name");
+            assertThat(Modifier.isPrivate(field.getModifiers()))
+                    .withFailMessage("name property should be private")
+                    .isTrue();
+            assertThat(Modifier.isFinal(field.getModifiers()))
+                    .withFailMessage("name property should be final")
+                    .isTrue();
+            assertThat(field.getType())
+                    .withFailMessage("name property should be a String, but was %s", field.getType())
+                    .isEqualTo(String.class);
+        } catch (NoSuchFieldException e) {
+            fail("Weapon should have a name property");
+        }
+        try {
+            Field field = Weapon.class.getDeclaredField("damage");
+            assertThat(Modifier.isPrivate(field.getModifiers()))
+                    .withFailMessage("damage property should be private")
+                    .isTrue();
+            assertThat(Modifier.isFinal(field.getModifiers()))
+                    .withFailMessage("damage property should be final")
+                    .isTrue();
+            assertThat(field.getType())
+                    .withFailMessage("damage property should be a int, but was %s", field.getType())
+                    .isEqualTo(int.class);
+        } catch (NoSuchFieldException e) {
+            fail("Weapon should have a damage property");
+        }
+    }
+
+    @Test
+    void classWeapon_shouldHaveGetters() {
+        try {
+            Method getter = Weapon.class.getDeclaredMethod("getName");
+            assertThat(Modifier.isPublic(getter.getModifiers()))
+                    .withFailMessage("getName method should be public")
+                    .isTrue();
+            assertThat(getter.getReturnType())
+                    .withFailMessage("getName method should return String")
+                    .isEqualTo(String.class);
+        } catch (NoSuchMethodException e) {
+            fail("Weapon should have getName method");
+        }
+        try {
+            Method getter = Weapon.class.getDeclaredMethod("getDamage");
+            assertThat(Modifier.isPublic(getter.getModifiers()))
+                    .withFailMessage("getDamage method should be public")
+                    .isTrue();
+            assertThat(getter.getReturnType())
+                    .withFailMessage("getDamage method should return int")
+                    .isEqualTo(int.class);
+        } catch (NoSuchMethodException e) {
+            fail("Weapon should have getDamage method");
+        }
+    }
+
+    @Test
+    void objectWeapon_attackAndTakeDamage() {
+        try {
+            Method getDamage = Weapon.class.getDeclaredMethod("getDamage");
+            Method getName = Weapon.class.getDeclaredMethod("getName");
+
+            Constructor<Weapon> constructor = Weapon.class.getConstructor(String.class, int.class);
+
+            Weapon excalibur = constructor.newInstance("Excalibur", 42);
+
+            assertThat(getName.invoke(excalibur))
+                    .withFailMessage("The name of the weapon should be Excelibur but was %s", getName.invoke(excalibur))
+                    .isEqualTo("Excalibur");
+            assertThat(getDamage.invoke(excalibur))
+                    .withFailMessage("The damage of the weapon should be 42 but was %d", getDamage.invoke(excalibur))
+                    .isEqualTo(42);
+            assertThat(excalibur.toString()).isEqualTo("Excalibur deals 42 damages");
+
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            fail("Weapon is not correctly defined", e);
+        }
+    }
+
+    @Test
     void objectMonster_attackAndTakeDamage() {
         try {
             Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
-            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
             Method attack = Character.class.getDeclaredMethod("attack", Character.class);
 
-            Constructor<Monster> constructor = Monster.class.getConstructor(String.class, int.class);
-            Constructor<Sorcerer> constructorSorcerer = Sorcerer.class.getConstructor(String.class, int.class, int.class);
+            Constructor<Weapon> constructorWeapon = Weapon.class.getConstructor(String.class, int.class);
+            Constructor<Monster> constructor = Monster.class.getConstructor(String.class, int.class, Weapon.class);
+            Constructor<Sorcerer> constructorSorcerer = Sorcerer.class.getConstructor(String.class, int.class, int.class, Weapon.class);
 
-            Monster troll = constructor.newInstance("Troll", 20);
-            Sorcerer harryPotter = constructorSorcerer.newInstance("Harry Potter", 30, 4);
-
-            takeDamage.invoke(troll, 10);
-
-            assertThat(getCurrentHealth.invoke(troll)).isEqualTo(12);
-
-            takeDamage.invoke(troll, 8);
-
-            assertThat(getCurrentHealth.invoke(troll)).isEqualTo(6);
+            Monster troll = constructor.newInstance("Troll", 20, constructorWeapon.newInstance("Arc", 13));
+            Sorcerer harryPotter = constructorSorcerer.newInstance("Harry Potter", 30, 4, null);
 
             attack.invoke(troll, harryPotter);
 
-            assertThat(getCurrentHealth.invoke(harryPotter)).isEqualTo(23);
-            assertThat(getCurrentHealth.invoke(troll)).isEqualTo(6);
-
-            takeDamage.invoke(troll, 15);
-            assertThat(getCurrentHealth.invoke(troll)).isEqualTo(0);
+            assertThat(getCurrentHealth.invoke(harryPotter))
+                    .withFailMessage("After attack with excalibur, currentHealth of sorcerer should be 17, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(17);
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Monster is not correctly defined", e);
@@ -417,26 +533,19 @@ class AdventureAbstractTest {
     void objectSorcerer_attackAndTakeDamage() {
         try {
             Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
-            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
             Method attack = Character.class.getDeclaredMethod("attack", Character.class);
 
-            Constructor<Sorcerer> constructor = Sorcerer.class.getConstructor(String.class, int.class, int.class);
+            Constructor<Weapon> constructorWeapon = Weapon.class.getConstructor(String.class, int.class);
+            Constructor<Sorcerer> constructor = Sorcerer.class.getConstructor(String.class, int.class, int.class, Weapon.class);
 
-            Sorcerer dragoMalefoy = constructor.newInstance("Drago Malefoy", 20, 2);
-            Sorcerer harryPotter = constructor.newInstance("Harry Potter", 30, 4);
-
-            takeDamage.invoke(harryPotter, 15);
-
-            assertThat(getCurrentHealth.invoke(harryPotter)).isEqualTo(15);
+            Sorcerer dragoMalefoy = constructor.newInstance("Drago Malefoy", 20, 2, null);
+            Sorcerer harryPotter = constructor.newInstance("Harry Potter", 30, 4, constructorWeapon.newInstance("Baguette", 16));
 
             attack.invoke(harryPotter, dragoMalefoy);
 
-            assertThat(getCurrentHealth.invoke(harryPotter)).isEqualTo(19);
-            assertThat(getCurrentHealth.invoke(dragoMalefoy)).isEqualTo(10);
-
-            takeDamage.invoke(dragoMalefoy, 15);
-            assertThat(getCurrentHealth.invoke(dragoMalefoy)).isEqualTo(0);
-
+            assertThat(getCurrentHealth.invoke(dragoMalefoy))
+                    .withFailMessage("After attack with Baguette, currentHealth of sorcerer should be 4, but was %d", getCurrentHealth.invoke(dragoMalefoy))
+                    .isEqualTo(4);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Sorcerer is not correctly defined", e);
         }
@@ -449,27 +558,22 @@ class AdventureAbstractTest {
             Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
             Method attack = Character.class.getDeclaredMethod("attack", Character.class);
 
-            Constructor<Templar> constructor = Templar.class.getConstructor(String.class, int.class, int.class, int.class);
-            Constructor<Sorcerer> constructorSorcerer = Sorcerer.class.getConstructor(String.class, int.class, int.class);
+            Constructor<Weapon> constructorWeapon = Weapon.class.getConstructor(String.class, int.class);
+            Constructor<Templar> constructor = Templar.class.getConstructor(String.class, int.class, int.class, int.class, Weapon.class);
+            Constructor<Sorcerer> constructorSorcerer = Sorcerer.class.getConstructor(String.class, int.class, int.class, Weapon.class);
 
-            Templar alistair = constructor.newInstance("Drago Malefoy", 20, 2, 3);
-            Sorcerer harryPotter = constructorSorcerer.newInstance("Harry Potter", 30, 4);
-
-            takeDamage.invoke(alistair, 15);
-
-            assertThat(getCurrentHealth.invoke(alistair)).isEqualTo(8);
+            Templar alistair = constructor.newInstance("Alistair", 20, 2, 3, constructorWeapon.newInstance("Anduril", 21));
+            Sorcerer harryPotter = constructorSorcerer.newInstance("Harry Potter", 30, 4, null);
 
             attack.invoke(alistair, harryPotter);
 
-            assertThat(getCurrentHealth.invoke(harryPotter)).isEqualTo(24);
-            assertThat(getCurrentHealth.invoke(alistair)).isEqualTo(10);
+            assertThat(getCurrentHealth.invoke(harryPotter))
+                    .withFailMessage("After attack with Anduril, currentHealth of sorcerer should be 9, but was %d", getCurrentHealth.invoke(harryPotter))
+                    .isEqualTo(9);
 
-            takeDamage.invoke(alistair, 20);
-            assertThat(getCurrentHealth.invoke(alistair)).isEqualTo(0);
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Templar is not correctly defined", e);
         }
     }
-
 }

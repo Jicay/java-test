@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class AdventureInterfaceTest {
+class AdventureSorcererTest {
 
     @Test
     void class_shouldBePublic() {
@@ -50,8 +50,8 @@ class AdventureInterfaceTest {
         }
         try {
             Field field = Character.class.getDeclaredField("currentHealth");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("currentHealth property should be private")
+            assertThat(Modifier.isProtected(field.getModifiers()))
+                    .withFailMessage("currentHealth property should be protected")
                     .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("currentHealth property should not be final")
@@ -195,6 +195,9 @@ class AdventureInterfaceTest {
         assertThat(Monster.class)
                 .withFailMessage("Monster should be public")
                 .isPublic();
+        assertThat(Monster.class.getSuperclass())
+                .withFailMessage("Monster should inherit Character")
+                .isEqualTo(Character.class);
     }
 
     @Test
@@ -267,6 +270,150 @@ class AdventureInterfaceTest {
                     .isEqualTo(int.class);
         } catch (NoSuchMethodException e) {
             fail("Tank should have a getHealCapacity method");
+        }
+    }
+
+
+
+    @Test
+    void classSorcerer_shouldBePublic() {
+        assertThat(Sorcerer.class)
+                .withFailMessage("Sorcerer should be public")
+                .isPublic();
+        assertThat(Sorcerer.class.getSuperclass())
+                .withFailMessage("Sorcerer should inherit Character")
+                .isEqualTo(Character.class);
+        assertThat(Sorcerer.class.getInterfaces())
+                .withFailMessage("Sorcerer should implements Healer")
+                .containsExactly(Healer.class);
+    }
+
+    @Test
+    void classSorcerer_shouldHaveConstructor() {
+        try {
+            Constructor<Sorcerer> constructor = Sorcerer.class.getConstructor(String.class, int.class, int.class);
+            assertThat(Modifier.isPublic(constructor.getModifiers()))
+                    .withFailMessage("Full parameters constructor should be public")
+                    .isTrue();
+        } catch (NoSuchMethodException e) {
+            fail("Sorcerer should have a String, int and int parameters constructor");
+        }
+    }
+
+    @Test
+    void classSorcerer_shouldHaveCorrectProperties() {
+        try {
+            Field field = Sorcerer.class.getDeclaredField("healCapacity");
+            assertThat(Modifier.isPrivate(field.getModifiers()))
+                    .withFailMessage("healCapacity property should be private")
+                    .isTrue();
+            assertThat(Modifier.isFinal(field.getModifiers()))
+                    .withFailMessage("healCapacity property should be final")
+                    .isTrue();
+            assertThat(field.getType())
+                    .withFailMessage("healCapacity property should be a int, but was %s", field.getType())
+                    .isEqualTo(int.class);
+        } catch (NoSuchFieldException e) {
+            fail("Sorcerer should have a healCapacity property");
+        }
+    }
+
+    @Test
+    void objectSorcerer_instantiationAndToString() {
+        try {
+            Field allCharacters = Character.class.getDeclaredField("allCharacters");
+            allCharacters.setAccessible(true);
+            allCharacters.set(null, new ArrayList<>());
+            allCharacters.setAccessible(false);
+
+
+            Method getName = Character.class.getDeclaredMethod("getName");
+            Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
+            Method getMaxHealth = Character.class.getDeclaredMethod("getMaxHealth");
+            Method getHealCapacity = Sorcerer.class.getDeclaredMethod("getHealCapacity");
+            Method printStatus = Character.class.getDeclaredMethod("printStatus");
+            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
+
+            Constructor<Sorcerer> constructor = Sorcerer.class.getConstructor(String.class, int.class, int.class);
+            Sorcerer dumbledore = constructor.newInstance("Dumbledore", 30, 8);
+            Sorcerer ronWeasley = constructor.newInstance("Ron Weasley", 10, 1);
+
+            takeDamage.invoke(ronWeasley, 12);
+
+            assertThat(getName.invoke(dumbledore))
+                    .withFailMessage("Name of sorcerer should be Dumbledore, but was %s", getName.invoke(dumbledore))
+                    .isEqualTo("Dumbledore");
+            assertThat(getCurrentHealth.invoke(dumbledore))
+                    .withFailMessage("Current Health of sorcerer should be 30, but was %d", getCurrentHealth.invoke(dumbledore))
+                    .isEqualTo(30);
+            assertThat(getMaxHealth.invoke(dumbledore))
+                    .withFailMessage("Max Health of sorcerer should be 30, but was %d", getMaxHealth.invoke(dumbledore))
+                    .isEqualTo(30);
+            assertThat(getHealCapacity.invoke(dumbledore))
+                    .withFailMessage("Heal Capacity of sorcerer should be 8, but was %d", getHealCapacity.invoke(dumbledore))
+                    .isEqualTo(8);
+            assertThat(dumbledore.toString()).isEqualTo("Dumbledore is a sorcerer with 30 HP. It can heal 8 HP.");
+
+            assertThat(getName.invoke(ronWeasley))
+                    .withFailMessage("Name of sorcerer should be Ron Weasley, but was %s", getName.invoke(ronWeasley))
+                    .isEqualTo("Ron Weasley");
+            assertThat(getCurrentHealth.invoke(ronWeasley))
+                    .withFailMessage("Current Health of sorcerer should be 0, but was %d", getCurrentHealth.invoke(ronWeasley))
+                    .isEqualTo(0);
+            assertThat(getMaxHealth.invoke(ronWeasley))
+                    .withFailMessage("Max Health of sorcerer should be 10, but was %d", getMaxHealth.invoke(ronWeasley))
+                    .isEqualTo(10);
+            assertThat(getHealCapacity.invoke(ronWeasley))
+                    .withFailMessage("Heal Capacity of sorcerer should be 1, but was %d", getHealCapacity.invoke(ronWeasley))
+                    .isEqualTo(1);
+            assertThat(ronWeasley.toString()).isEqualTo("Ron Weasley is a dead sorcerer. So bad, it could heal 1 HP.");
+
+            String print = (String) printStatus.invoke(null);
+
+            assertThat(print).isEqualTo("""
+                ------------------------------------------
+                Characters currently fighting :
+                 - Dumbledore is a sorcerer with 30 HP. It can heal 8 HP.
+                 - Ron Weasley is a dead sorcerer. So bad, it could heal 1 HP.
+                ------------------------------------------""");
+
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchFieldException e) {
+            fail("Sorcerer is not correctly defined", e);
+        }
+    }
+
+    @Test
+    void objectSorcerer_heal() {
+        try {
+            Method heal = Sorcerer.class.getDeclaredMethod("heal", Character.class);
+            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
+
+            Constructor<Sorcerer> constructor = Sorcerer.class.getConstructor(String.class, int.class, int.class);
+            Sorcerer dumbledore = constructor.newInstance("Dumbledore", 30, 8);
+            Sorcerer ronWeasley = constructor.newInstance("Ron Weasley", 20, 1);
+
+            Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
+
+            takeDamage.invoke(ronWeasley, 12);
+
+            assertThat(getCurrentHealth.invoke(ronWeasley))
+                    .withFailMessage("The HP of Ron before healing should be 8")
+                    .isEqualTo(8);
+
+            heal.invoke(dumbledore, ronWeasley);
+
+            assertThat(getCurrentHealth.invoke(ronWeasley))
+                    .withFailMessage("The HP of Ron after first healing should be 16")
+                    .isEqualTo(16);
+
+            heal.invoke(dumbledore, ronWeasley);
+
+            assertThat(getCurrentHealth.invoke(ronWeasley))
+                    .withFailMessage("The HP of Ron after last healing should be 20")
+                    .isEqualTo(20);
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            fail("Sorcerer is not correctly defined", e);
         }
     }
 

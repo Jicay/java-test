@@ -1,8 +1,10 @@
 exercise:
-  name: AdventureMonster
+  name: AdventureInterface
   quest: 4
-  index: 3
+  index: 4
   files-from-student:
     - Character.java
     - Monster.java
-  test-folder: AdventureMonsterTest
+    - Tank.java
+    - Healer.java
+  test-folder: AdventureInterfaceTest

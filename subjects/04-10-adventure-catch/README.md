@@ -1,11 +1,10 @@
 # Instructions
 
-Create a new class `DeadCharacterException` in a new file `DeadCharacterException.java`.  
-This class is an exception so should inherit from `Exception`.
+Now, we will throw and catch some exceptions.
 
-This class has a constructor which takes a `Character` as parameter.
+For the methods `attack`, `takeDamage` and `heal`, if the character si already dead, you must throw a `DeadCharacterException`. Do this for all the `Character` subclasses.  
 
-It has one method `getMessage` which returns a String : `The <sorcerer | monster | templar> <character.name> is dead.`.
+The `fight` method should not throw an exception, so you will need to catch the exception in this method.
 
 # Usage
 
@@ -15,14 +14,27 @@ Here is a possible ExerciseRunner.java to test your function :
 public class ExerciseRunner {
 
     public static void main(String[] args) {
-        Weapon feu = new Weapon("Boule de feu", 7);
-        Sorcerer triss = new Sorcerer("Triss Merigold", 30, 5, feu); 
-        Templar geralt = new Templar("Geralt de Riv", 28, 2, 5, feu); 
-        DeadCharacterException exceptionTriss = new DeadCharacterException(triss);
-        DeadCharacterException exceptionGeralt = new DeadCharacterException(geralt);
-        
-        System.out.println(exceptionTriss.getMessage());
-        System.out.println(exceptionGeralt.getMessage());
+        Weapon excalibur = new Weapon("Excalibur", 7);
+        Weapon baton = new Weapon("Baton", 3);
+        Templar arthur = new Templar("Arthur", 30, 5, 3, excalibur);
+        Sorcerer merlin = new Sorcerer("Merlin", 28, 2, baton);
+
+        try {
+            arthur.takeDamage(50);
+        } catch (DeadCharacterException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            arthur.takeDamage(2);
+        } catch (DeadCharacterException e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            arthur.attack(merlin);
+        } catch (DeadCharacterException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
 ```
@@ -31,11 +43,13 @@ and its output :
 ```shell
 $ javac *.java -d build
 $ java -cp build ExerciseRunner 
-The sorcerer Triss Merigold is dead.
-The templar Geralt de Riv is dead.
+The templar Arthur is dead.
+The templar Arthur is dead.
 $ 
 ```
 
 # Notions
-[Class](https://docs.oracle.com/javase/tutorial/java/javaOO/classdecl.html)  
-[Property](https://docs.oracle.com/javase/tutorial/java/javaOO/variables.html)  
+[Try](https://docs.oracle.com/javase/tutorial/essential/exceptions/try.html)  
+[Catch](https://docs.oracle.com/javase/tutorial/essential/exceptions/catch.html)  
+[Declaring thrown](https://docs.oracle.com/javase/tutorial/essential/exceptions/declaring.html)  
+[Throwing](https://docs.oracle.com/javase/tutorial/essential/exceptions/throwing.html)  

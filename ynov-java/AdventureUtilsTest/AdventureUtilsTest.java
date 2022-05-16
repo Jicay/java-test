@@ -2,18 +2,18 @@
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import org.assertj.core.api.Assertions;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
-class AdventureCharacterTest {
+class AdventureUtilsTest {
 
     @Test
     void class_shouldBePublic() {
@@ -77,6 +77,23 @@ class AdventureCharacterTest {
                     .isEqualTo(int.class);
         } catch (NoSuchFieldException e) {
             fail("Character should have a maxHealth property");
+        }
+        try {
+            Field field = Character.class.getDeclaredField("allCharacters");
+            assertThat(Modifier.isPrivate(field.getModifiers()))
+                    .withFailMessage("allCharacters property should be private")
+                    .isTrue();
+            assertThat(Modifier.isFinal(field.getModifiers()))
+                    .withFailMessage("allCharacters property should not be final")
+                    .isFalse();
+            assertThat(Modifier.isStatic(field.getModifiers()))
+                    .withFailMessage("allCharacters property should be static")
+                    .isTrue();
+            assertThat(field.getType())
+                    .withFailMessage("allCharacters property should be a List, but was %s", field.getType())
+                    .isEqualTo(List.class);
+        } catch (NoSuchFieldException e) {
+            fail("Character should have a allCharacters property");
         }
     }
 
@@ -144,174 +161,148 @@ class AdventureCharacterTest {
     }
 
     @Test
-    void object_takeDamage() {
-
+    void class_shouldHaveStaticMethod() {
         try {
+            Method printStatus = Character.class.getDeclaredMethod("printStatus");
+            assertThat(Modifier.isPublic(printStatus.getModifiers()))
+                    .withFailMessage("printStatus method should be public")
+                    .isTrue();
+            assertThat(Modifier.isStatic(printStatus.getModifiers()))
+                    .withFailMessage("printStatus method should be static")
+                    .isTrue();
+            assertThat(printStatus.getReturnType())
+                    .withFailMessage("printStatus method should return nothing")
+                    .isEqualTo(String.class);
+        } catch (NoSuchMethodException e) {
+            fail("Character should have printStatus method");
+        }
+        try {
+            Method fight = Character.class.getDeclaredMethod("fight", Character.class, Character.class);
+            assertThat(Modifier.isPublic(fight.getModifiers()))
+                    .withFailMessage("fight method should be public")
+                    .isTrue();
+            assertThat(Modifier.isStatic(fight.getModifiers()))
+                    .withFailMessage("fight method should be public")
+                    .isTrue();
+            assertThat(fight.getReturnType())
+                    .withFailMessage("fight method should return Character")
+                    .isEqualTo(Character.class);
+        } catch (NoSuchMethodException e) {
+            fail("Character should have fight method");
+        }
+    }
+
+    @Test
+    @Order(0)
+    void object_printStatus() {
+        try {
+            Field allCharacters = Character.class.getDeclaredField("allCharacters");
+            allCharacters.setAccessible(true);
+            allCharacters.set(null, new ArrayList<>());
+            allCharacters.setAccessible(false);
+
+            Method printStatus = Character.class.getDeclaredMethod("printStatus");
+            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
+            String firstPrint = (String) printStatus.invoke(null);
+
+            assertThat(firstPrint).isEqualTo("""
+                ------------------------------------------
+                Nobody's fighting right now !
+                ------------------------------------------""");
+
             Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
             Character legolas = constructor.newInstance("Legolas", 20);
-            Character sephiroth = constructor.newInstance("Sephiroth", 10);
+            Character sephiroth = constructor.newInstance("Sephiroth", 8);
+            constructor.newInstance("Commandant Shepard", 18);
 
-            Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
-            Method getMaxHealth = Character.class.getDeclaredMethod("getMaxHealth");
-            Method getName = Character.class.getDeclaredMethod("getName");
-            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
-            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
+            attack.invoke(legolas, sephiroth);
 
-            assertThat(getCurrentHealth.invoke(legolas))
-                    .withFailMessage("Legolas current health should be 20")
-                    .isEqualTo(20);
-            assertThat(getMaxHealth.invoke(legolas))
-                    .withFailMessage("Legolas max health should be 20")
-                    .isEqualTo(20);
-            assertThat(getName.invoke(legolas))
-                    .withFailMessage("Legolas name should be Legolas")
+            String lastPrint = (String) printStatus.invoke(null);
+
+            assertThat(lastPrint).isEqualTo("""
+                ------------------------------------------
+                Characters currently fighting :
+                 - Legolas : 20/20
+                 - Sephiroth : KO
+                 - Commandant Shepard : 18/18
+                ------------------------------------------""");
+
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchFieldException e) {
+            fail("Character is not correctly defined", e);
+        }
+    }
+
+    @Test
+    void object_fight_firstRoundWin_firstCharacter() {
+        try {
+            Method fight = Character.class.getDeclaredMethod("fight", Character.class, Character.class);
+
+            Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
+            Character legolas = constructor.newInstance("Legolas", 20);
+            Character sephiroth = constructor.newInstance("Sephiroth", 8);
+
+            Character res = (Character) fight.invoke(null, legolas, sephiroth);
+
+            assertThat(res.getName())
+                    .withFailMessage("The winner of the fight should be Legolas, but was %s", res.getName())
                     .isEqualTo("Legolas");
-
-            assertThat(getCurrentHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth current health should be 10")
-                    .isEqualTo(10);
-            assertThat(getMaxHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth max health should be 10")
-                    .isEqualTo(10);
-            assertThat(getName.invoke(sephiroth))
-                    .withFailMessage("Sephiroth name should be Sephiroth")
-                    .isEqualTo("Sephiroth");
-
-            attack.invoke(legolas, sephiroth);
-
-            assertThat(getCurrentHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth current health should be 1")
-                    .isEqualTo(1);
-            assertThat(getMaxHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth max health should be 10")
-                    .isEqualTo(10);
-            assertThat(getName.invoke(sephiroth))
-                    .withFailMessage("Sephiroth name should be Sephiroth")
-                    .isEqualTo("Sephiroth");
-
-            attack.invoke(legolas, sephiroth);
-
-            assertThat(getCurrentHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth current health should be 0")
+            assertThat(res.getCurrentHealth())
+                    .withFailMessage("The health of the winner of the fight should be 20 HP, but was %s", res.getCurrentHealth())
+                    .isEqualTo(20);
+            assertThat(sephiroth.getCurrentHealth())
+                    .withFailMessage("The health of the loser of the fight should be 0 HP, but was %s", sephiroth.getCurrentHealth())
                     .isEqualTo(0);
-            assertThat(getMaxHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth max health should be 10")
-                    .isEqualTo(10);
-            assertThat(getName.invoke(sephiroth))
-                    .withFailMessage("Sephiroth name should be Sephiroth")
-                    .isEqualTo("Sephiroth");
-
-            assertThat(getCurrentHealth.invoke(legolas))
-                    .withFailMessage("Legolas current health should be 20")
-                    .isEqualTo(20);
-            assertThat(getMaxHealth.invoke(legolas))
-                    .withFailMessage("Legolas max health should be 20")
-                    .isEqualTo(20);
-            assertThat(getName.invoke(legolas))
-                    .withFailMessage("Legolas name should be Legolas")
-                    .isEqualTo("Legolas");
-
-            takeDamage.invoke(legolas, 15);
-
-            assertThat(getCurrentHealth.invoke(legolas))
-                    .withFailMessage("Legolas current health should be 5")
-                    .isEqualTo(5);
-            assertThat(getMaxHealth.invoke(legolas))
-                    .withFailMessage("Legolas max health should be 20")
-                    .isEqualTo(20);
-            assertThat(getName.invoke(legolas))
-                    .withFailMessage("Legolas name should be Legolas")
-                    .isEqualTo("Legolas");
-
-
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Character is not correctly defined", e);
         }
     }
+
     @Test
-    void object_methods() {
-
+    void object_fight_firstRoundWin_secondCharacter() {
         try {
+            Method fight = Character.class.getDeclaredMethod("fight", Character.class, Character.class);
+
             Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
-            Character legolas = constructor.newInstance("Legolas", 20);
-            Character sephiroth = constructor.newInstance("Sephiroth", 10);
+            Character legolas = constructor.newInstance("Legolas", 8);
+            Character sephiroth = constructor.newInstance("Sephiroth", 15);
 
-            Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
-            Method getMaxHealth = Character.class.getDeclaredMethod("getMaxHealth");
-            Method getName = Character.class.getDeclaredMethod("getName");
-            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
-            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
+            Character res = (Character) fight.invoke(null, legolas, sephiroth);
 
-            assertThat(getCurrentHealth.invoke(legolas))
-                    .withFailMessage("Legolas current health should be 20")
-                    .isEqualTo(20);
-            assertThat(getMaxHealth.invoke(legolas))
-                    .withFailMessage("Legolas max health should be 20")
-                    .isEqualTo(20);
-            assertThat(getName.invoke(legolas))
-                    .withFailMessage("Legolas name should be Legolas")
-                    .isEqualTo("Legolas");
-
-            assertThat(getCurrentHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth current health should be 10")
-                    .isEqualTo(10);
-            assertThat(getMaxHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth max health should be 10")
-                    .isEqualTo(10);
-            assertThat(getName.invoke(sephiroth))
-                    .withFailMessage("Sephiroth name should be Sephiroth")
+            assertThat(res.getName())
+                    .withFailMessage("The winner of the fight should be Sephiroth, but was %s", res.getName())
                     .isEqualTo("Sephiroth");
-
-            attack.invoke(legolas, sephiroth);
-
-            assertThat(getCurrentHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth current health should be 1")
-                    .isEqualTo(1);
-            assertThat(getMaxHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth max health should be 10")
-                    .isEqualTo(10);
-            assertThat(getName.invoke(sephiroth))
-                    .withFailMessage("Sephiroth name should be Sephiroth")
-                    .isEqualTo("Sephiroth");
-
-            attack.invoke(legolas, sephiroth);
-
-            assertThat(getCurrentHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth current health should be 0")
+            assertThat(res.getCurrentHealth())
+                    .withFailMessage("The health of the winner of the fight should be 6 HP, but was %s", res.getCurrentHealth())
+                    .isEqualTo(6);
+            assertThat(legolas.getCurrentHealth())
+                    .withFailMessage("The health of the loser of the fight should be 0 HP, but was %s", legolas.getCurrentHealth())
                     .isEqualTo(0);
-            assertThat(getMaxHealth.invoke(sephiroth))
-                    .withFailMessage("Sephiroth max health should be 10")
-                    .isEqualTo(10);
-            assertThat(getName.invoke(sephiroth))
-                    .withFailMessage("Sephiroth name should be Sephiroth")
-                    .isEqualTo("Sephiroth");
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            fail("Character is not correctly defined", e);
+        }
+    }
 
-            assertThat(getCurrentHealth.invoke(legolas))
-                    .withFailMessage("Legolas current health should be 20")
-                    .isEqualTo(20);
-            assertThat(getMaxHealth.invoke(legolas))
-                    .withFailMessage("Legolas max health should be 20")
-                    .isEqualTo(20);
-            assertThat(getName.invoke(legolas))
-                    .withFailMessage("Legolas name should be Legolas")
+    @Test
+    void object_fight_manyRoundWin_firstCharacter() {
+        try {
+            Method fight = Character.class.getDeclaredMethod("fight", Character.class, Character.class);
+
+            Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
+            Character legolas = constructor.newInstance("Legolas", 50);
+            Character sephiroth = constructor.newInstance("Sephiroth", 44);
+
+            Character res = (Character) fight.invoke(null, legolas, sephiroth);
+
+            assertThat(res.getName())
+                    .withFailMessage("The winner of the fight should be Legolas, but was %s", res.getName())
                     .isEqualTo("Legolas");
-
-            takeDamage.invoke(legolas, 15);
-
-            assertThat(getCurrentHealth.invoke(legolas))
-                    .withFailMessage("Legolas current health should be 5")
-                    .isEqualTo(5);
-            assertThat(getMaxHealth.invoke(legolas))
-                    .withFailMessage("Legolas max health should be 20")
-                    .isEqualTo(20);
-            assertThat(getName.invoke(legolas))
-                    .withFailMessage("Legolas name should be Legolas")
-                    .isEqualTo("Legolas");
-
-
-            assertThat(legolas.toString()).isEqualTo("Legolas : 5/20");
-            assertThat(sephiroth.toString()).isEqualTo("Sephiroth : KO");
-
+            assertThat(res.getCurrentHealth())
+                    .withFailMessage("The health of the winner of the fight should be 14 HP, but was %s", res.getCurrentHealth())
+                    .isEqualTo(14);
+            assertThat(sephiroth.getCurrentHealth())
+                    .withFailMessage("The health of the loser of the fight should be 0 HP, but was %s", sephiroth.getCurrentHealth())
+                    .isEqualTo(0);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Character is not correctly defined", e);
         }

@@ -1,4 +1,6 @@
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Fail.fail;
 
 import java.lang.reflect.Constructor;
@@ -9,7 +11,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class AdventureExceptionTest {
+class AdventureCatchTest {
 
     @Test
     void class_shouldBePublic() {
@@ -161,14 +163,17 @@ class AdventureExceptionTest {
     @Test
     void class_shouldHaveAttackMethod() {
         try {
-            Method getter = Character.class.getDeclaredMethod("attack", Character.class);
-            assertThat(Modifier.isPublic(getter.getModifiers()))
+            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
+            assertThat(attack.getExceptionTypes())
+                    .withFailMessage("attack should throw DeadCharacterException")
+                    .containsExactlyInAnyOrder(DeadCharacterException.class);
+            assertThat(Modifier.isPublic(attack.getModifiers()))
                     .withFailMessage("attack method should be public")
                     .isTrue();
-            assertThat(Modifier.isAbstract(getter.getModifiers()))
+            assertThat(Modifier.isAbstract(attack.getModifiers()))
                     .withFailMessage("attack method should be abstract")
                     .isTrue();
-            assertThat(getter.getReturnType())
+            assertThat(attack.getReturnType())
                     .withFailMessage("attack method should return nothing")
                     .isEqualTo(void.class);
         } catch (NoSuchMethodException e) {
@@ -176,6 +181,9 @@ class AdventureExceptionTest {
         }
         try {
             Method getter = Character.class.getDeclaredMethod("takeDamage", int.class);
+            assertThat(getter.getExceptionTypes())
+                    .withFailMessage("takeDamage should throw DeadCharacterException")
+                    .containsExactlyInAnyOrder(DeadCharacterException.class);
             assertThat(Modifier.isPublic(getter.getModifiers()))
                     .withFailMessage("takeDamage method should be public")
                     .isTrue();
@@ -208,6 +216,9 @@ class AdventureExceptionTest {
         }
         try {
             Method fight = Character.class.getDeclaredMethod("fight", Character.class, Character.class);
+            assertThat(fight.getExceptionTypes())
+                    .withFailMessage("fight should not throw any exception")
+                    .isEmpty();
             assertThat(Modifier.isPublic(fight.getModifiers()))
                     .withFailMessage("fight method should be public")
                     .isTrue();
@@ -269,6 +280,9 @@ class AdventureExceptionTest {
         }
         try {
             Method heal = Healer.class.getDeclaredMethod("heal", Character.class);
+            assertThat(heal.getExceptionTypes())
+                    .withFailMessage("heal should throw DeadCharacterException")
+                    .containsExactlyInAnyOrder(DeadCharacterException.class);
             assertThat(Modifier.isPublic(heal.getModifiers()))
                     .withFailMessage("heal method should be public")
                     .isTrue();
@@ -505,17 +519,28 @@ class AdventureExceptionTest {
     }
 
     @Test
-    void objectException_monster() {
+    void objectMonster_shouldThrowException() {
         try {
-            Method getMessage = DeadCharacterException.class.getDeclaredMethod("getMessage");
+            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
+            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
 
-            Constructor<Monster> constructorMonster = Monster.class.getConstructor(String.class, int.class, Weapon.class);
-            Constructor<DeadCharacterException> constructor = DeadCharacterException.class.getConstructor(Character.class);
+            Constructor<Monster> constructor = Monster.class.getConstructor(String.class, int.class, Weapon.class);
 
-            Monster troll = constructorMonster.newInstance("Troll", 20, null);
-            DeadCharacterException exception = constructor.newInstance(troll);
+            Monster troll = constructor.newInstance("Troll", 20, null);
+            Monster gobelin = constructor.newInstance("Gobelin", 10, null);
 
-            assertThat(getMessage.invoke(exception)).isEqualTo("The monster Troll is dead.");
+            assertThatNoException().isThrownBy(() -> takeDamage.invoke(troll, 50));
+            assertThatThrownBy(() -> takeDamage.invoke(troll, 50))
+                    .withFailMessage("The takeDamage call of an already dead monster should throw exception")
+                    .getCause()
+                    .isInstanceOf(DeadCharacterException.class)
+                    .hasMessage("The monster Troll is dead.");
+
+            assertThatThrownBy(() -> attack.invoke(troll, gobelin))
+                    .withFailMessage("The attack call of an already dead monster should throw exception")
+                    .getCause()
+                    .isInstanceOf(DeadCharacterException.class)
+                    .hasMessage("The monster Troll is dead.");
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Monster is not correctly defined", e);
@@ -523,34 +548,73 @@ class AdventureExceptionTest {
     }
 
     @Test
-    void objectSorcerer_attackAndTakeDamage() {
+    void objectSorcerer_shouldThrowException() {
         try {
-            Method getMessage = DeadCharacterException.class.getDeclaredMethod("getMessage");
+            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
+            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
+            Method heal = Healer.class.getDeclaredMethod("heal", Character.class);
 
-            Constructor<Sorcerer> constructorSorcerer = Sorcerer.class.getConstructor(String.class, int.class, int.class, Weapon.class);
-            Constructor<DeadCharacterException> constructor = DeadCharacterException.class.getConstructor(Character.class);
+            Constructor<Sorcerer> constructor = Sorcerer.class.getConstructor(String.class, int.class, int.class, Weapon.class);
 
-            Sorcerer saroumane = constructorSorcerer.newInstance("Saroumane", 20, 4, null);
-            DeadCharacterException exception = constructor.newInstance(saroumane);
+            Sorcerer merlin = constructor.newInstance("Merlin", 20, 5, null);
+            Sorcerer morgane = constructor.newInstance("Morgane", 10, 3, null);
 
-            assertThat(getMessage.invoke(exception)).isEqualTo("The sorcerer Saroumane is dead.");
+            assertThatNoException().isThrownBy(() -> takeDamage.invoke(merlin, 50));
+
+            assertThatThrownBy(() -> takeDamage.invoke(merlin, 50))
+                    .withFailMessage("The takeDamage call of an already dead sorcerer should throw exception")
+                    .getCause()
+                    .isInstanceOf(DeadCharacterException.class)
+                    .hasMessage("The sorcerer Merlin is dead.");
+
+            assertThatThrownBy(() -> attack.invoke(merlin, morgane))
+                    .withFailMessage("The attack call of an already dead sorcerer should throw exception")
+                    .getCause()
+                    .isInstanceOf(DeadCharacterException.class)
+                    .hasMessage("The sorcerer Merlin is dead.");
+
+            assertThatThrownBy(() -> heal.invoke(merlin, morgane))
+                    .withFailMessage("The heal call of an already dead sorcerer should throw exception")
+                    .getCause()
+                    .isInstanceOf(DeadCharacterException.class)
+                    .hasMessage("The sorcerer Merlin is dead.");
+
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            fail("Sorcerer is not correctly defined", e);
+            fail("Monster is not correctly defined", e);
         }
     }
 
     @Test
     void objectTemplar_attackAndTakeDamage() {
         try {
-            Method getMessage = DeadCharacterException.class.getDeclaredMethod("getMessage");
+            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
+            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
+            Method heal = Healer.class.getDeclaredMethod("heal", Character.class);
 
-            Constructor<Templar> constructorTemplar = Templar.class.getConstructor(String.class, int.class, int.class, int.class, Weapon.class);
-            Constructor<DeadCharacterException> constructor = DeadCharacterException.class.getConstructor(Character.class);
+            Constructor<Templar> constructor = Templar.class.getConstructor(String.class, int.class, int.class, int.class, Weapon.class);
 
-            Templar lancelot = constructorTemplar.newInstance("Lacelot", 20, 4, 2, null);
-            DeadCharacterException exception = constructor.newInstance(lancelot);
+            Templar perceval = constructor.newInstance("Perceval", 20, 5, 2, null);
+            Templar gauvin = constructor.newInstance("Gauvin", 10, 3, 2, null);
 
-            assertThat(getMessage.invoke(exception)).isEqualTo("The templar Lacelot is dead.");
+            assertThatNoException().isThrownBy(() -> takeDamage.invoke(perceval, 50));
+
+            assertThatThrownBy(() -> takeDamage.invoke(perceval, 50))
+                    .withFailMessage("The takeDamage call of an already dead templar should throw exception")
+                    .getCause()
+                    .isInstanceOf(DeadCharacterException.class)
+                    .hasMessage("The templar Perceval is dead.");
+
+            assertThatThrownBy(() -> attack.invoke(perceval, gauvin))
+                    .withFailMessage("The attack call of an already dead templar should throw exception")
+                    .getCause()
+                    .isInstanceOf(DeadCharacterException.class)
+                    .hasMessage("The templar Perceval is dead.");
+
+            assertThatThrownBy(() -> heal.invoke(perceval, gauvin))
+                    .withFailMessage("The heal call of an already dead templar should throw exception")
+                    .getCause()
+                    .isInstanceOf(DeadCharacterException.class)
+                    .hasMessage("The templar Perceval is dead.");
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Templar is not correctly defined", e);
         }

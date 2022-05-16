@@ -46,5 +46,4 @@ $
 ```
 
 # Notions
-[Class](https://docs.oracle.com/javase/tutorial/java/javaOO/classdecl.html)  
-[Property](https://docs.oracle.com/javase/tutorial/java/javaOO/variables.html)  
+[Inheritance](https://docs.oracle.com/javase/tutorial/java/IandI/subclasses.html)  

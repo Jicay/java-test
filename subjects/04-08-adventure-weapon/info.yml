@@ -1,7 +1,7 @@
 exercise:
-  name: AdventureAbstract
+  name: AdventureWeapon
   quest: 4
-  index: 7
+  index: 8
   files-from-student:
     - Character.java
     - Monster.java
@@ -9,4 +9,5 @@ exercise:
     - Healer.java
     - Sorcerer.java
     - Templar.java
-  test-folder: AdventureAbstractTest
+    - Weapon.java
+  test-folder: AdventureWeaponTest

@@ -1,22 +1,26 @@
 # Instructions
 
-In the following quest, we will work with the same files and classes. You should keep them from one exercise to the following.
+Let's add some useful method to allow us to manipulate and monitor what happen with our characters.
 
-Create a file `Character.java`.
+Firstly, let's add something to see all our characters in one call : 
+* Add a private static list of `Character`, `allCharacters`, which will contains all our characters. In the constructor, you need to add this new `Character` to this list.
+* Add a static method, `printStatus`, which take no parameters and will return a formatted String that will list all characters in `allCharaters`. The awaited format is as follow : 
+```
+------------------------------------------
+Characters currently fighting : 
+ - <character1.toString>
+ - <character2.toString>
+------------------------------------------
+```
+If there is no character created : 
+```
+------------------------------------------
+Nobody's fighting right now !
+------------------------------------------
+```
 
-Create a public class named `Character`.  
-The class must contains three properties : 
-* maxHealth (int) : with a getter and no setter. This property is not updatable (`final` keyword).
-* currentHealth (int) : with a getter and no setter.
-* name (String) : with a getter and no setter. This property is not updatable (`final` keyword).
-
-Create a constructor with two parameters (name and maxHealth) : the currentHealth is initialized with the maxHealth value.
-
-Rewrite the `toString`, that will have the format `<name> : <currentHealth>/<maxHealth>`.
-
-Implement two methods : 
-* `takeDamage`, with an integer parameter, that will remove the amount in parameter to the `currentHealth`. The current health can't be lower than 0.
-* `attack`, with a `Character` parameter, that will call `takeDamage` of the parameter with a default value : `9`.
+Finally, add a static method, `fight`, which take two characters and returns the winner and the fight.  
+During the fight, the first one attack, then the second one, then the first, then the second and so on until one of them reaches 0 in its currentHealth. When one of them currentHealth reach, the other one is the winner.
 
 # Usage
 
@@ -26,19 +30,17 @@ Here is a possible ExerciseRunner.java to test your function :
 public class ExerciseRunner {
 
     public static void main(String[] args) {
+        System.out.println(Character.printStatus());
+
         Character aragorn = new Character("Aragorn", 20);
-        Character uruk = new Character("Uruk", 5);
-        
-        System.out.println(aragorn.toString());
-        System.out.println(uruk.toString());
-        
-        aragorn.attack(uruk);
+        Character uruk = new Character("Uruk", 15);
 
-        System.out.println(uruk.toString());
-        
-        aragorn.takeDamage(12);
+        System.out.println(Character.printStatus());
 
-        System.out.println(aragorn.toString());
+        Character winner = Character.fight(aragorn, uruk);
+
+        System.out.println(winner.toString());
+        System.out.println(Character.printStatus());
     }
 }
 ```
@@ -47,13 +49,22 @@ and its output :
 ```shell
 $ javac *.java -d build
 $ java -cp build ExerciseRunner 
-Aragorn : 20/20
-Uruk : 5/5
-Uruk : 0/5
-Aragorn : 8/20
+------------------------------------------
+Nobody's fighting right now !
+------------------------------------------
+------------------------------------------
+Characters currently fighting : 
+ - Aragorn : 20/20
+ - Uruk : 15/20
+------------------------------------------
+Aragorn : 11/20
+------------------------------------------
+Characters currently fighting : 
+ - Aragorn : 11/20
+ - Uruk : KO
+------------------------------------------
 $ 
 ```
 
 # Notions
-[Class](https://docs.oracle.com/javase/tutorial/java/javaOO/classdecl.html)  
-[Property](https://docs.oracle.com/javase/tutorial/java/javaOO/variables.html)  
+[Static](https://docs.oracle.com/javase/tutorial/java/javaOO/classvars.html)  

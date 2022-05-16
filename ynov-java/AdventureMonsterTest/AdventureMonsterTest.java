@@ -13,7 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
-class AdventureUtilsTest {
+class AdventureMonsterTest {
 
     @Test
     void class_shouldBePublic() {
@@ -193,15 +193,37 @@ class AdventureUtilsTest {
     }
 
     @Test
-    @Order(0)
-    void object_printStatus() {
+    void classMonster_shouldBePublic() {
+        assertThat(Monster.class)
+                .withFailMessage("Monster should be public")
+                .isPublic();
+        assertThat(Monster.class.getSuperclass())
+                .withFailMessage("Monster should inherit Character")
+                .isEqualTo(Character.class);
+    }
+
+    @Test
+    void classMonster_shouldHaveFullParameterConstructor() {
+        try {
+            Constructor<Monster> constructor = Monster.class.getDeclaredConstructor(String.class, int.class);
+            assertThat(Modifier.isPublic(constructor.getModifiers()))
+                    .withFailMessage("Full parameters constructor should be public")
+                    .isTrue();
+        } catch (NoSuchMethodException e) {
+            fail("Monster should have a String and int parameters constructor");
+        }
+    }
+
+    @Test
+    void objectMonster_toString() {
         try {
             Field allCharacters = Character.class.getDeclaredField("allCharacters");
             allCharacters.setAccessible(true);
             allCharacters.set(null, new ArrayList<>());
+            allCharacters.setAccessible(false);
 
             Method printStatus = Character.class.getDeclaredMethod("printStatus");
-            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
+            Method fight = Character.class.getDeclaredMethod("fight", Character.class, Character.class);
             String firstPrint = (String) printStatus.invoke(null);
 
             assertThat(firstPrint).isEqualTo("""
@@ -209,82 +231,28 @@ class AdventureUtilsTest {
                 Nobody's fighting right now !
                 ------------------------------------------""");
 
-            Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
-            Character legolas = constructor.newInstance("Legolas", 20);
-            Character sephiroth = constructor.newInstance("Sephiroth", 8);
-            constructor.newInstance("Commandant Shepard", 18);
+            Constructor<Monster> constructor = Monster.class.getDeclaredConstructor(String.class, int.class);
+            Monster gobelin = constructor.newInstance("Gobelin", 30);
+            Monster leviathan = constructor.newInstance("Leviathan", 10);
 
-            attack.invoke(legolas, sephiroth);
+            assertThat(gobelin.toString()).isEqualTo("Gobelin is a monster with 30 HP");
+            assertThat(leviathan.toString()).isEqualTo("Leviathan is a monster with 10 HP");
+
+            fight.invoke(null, gobelin, leviathan);
+
+            assertThat(leviathan.toString()).isEqualTo("Leviathan is a monster and is dead");
 
             String lastPrint = (String) printStatus.invoke(null);
 
             assertThat(lastPrint).isEqualTo("""
                 ------------------------------------------
                 Characters currently fighting :
-                 - Legolas : 20/20
-                 - Sephiroth : KO
-                 - Commandant Shepard : 18/18
+                 - Gobelin is a monster with 21 HP
+                 - Leviathan is a monster and is dead
                 ------------------------------------------""");
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchFieldException e) {
-            fail("Character is not correctly defined", e);
-        }
-    }
-
-    @Test
-    void object_fight_firstRoundWin_firstCharacter() {
-        try {
-            Method fight = Character.class.getDeclaredMethod("fight", Character.class, Character.class);
-
-            Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
-            Character legolas = constructor.newInstance("Legolas", 20);
-            Character sephiroth = constructor.newInstance("Sephiroth", 8);
-
-            Character res = (Character) fight.invoke(null, legolas, sephiroth);
-
-            assertThat(res.getName()).isEqualTo("Legolas");
-            assertThat(res.getCurrentHealth()).isEqualTo(20);
-            assertThat(sephiroth.getCurrentHealth()).isEqualTo(0);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            fail("Character is not correctly defined", e);
-        }
-    }
-
-    @Test
-    void object_fight_firstRoundWin_secondCharacter() {
-        try {
-            Method fight = Character.class.getDeclaredMethod("fight", Character.class, Character.class);
-
-            Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
-            Character legolas = constructor.newInstance("Legolas", 8);
-            Character sephiroth = constructor.newInstance("Sephiroth", 15);
-
-            Character res = (Character) fight.invoke(null, legolas, sephiroth);
-
-            assertThat(res.getName()).isEqualTo("Sephiroth");
-            assertThat(res.getCurrentHealth()).isEqualTo(6);
-            assertThat(legolas.getCurrentHealth()).isEqualTo(0);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            fail("Character is not correctly defined", e);
-        }
-    }
-
-    @Test
-    void object_fight_manyRoundWin_firstCharacter() {
-        try {
-            Method fight = Character.class.getDeclaredMethod("fight", Character.class, Character.class);
-
-            Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
-            Character legolas = constructor.newInstance("Legolas", 50);
-            Character sephiroth = constructor.newInstance("Sephiroth", 44);
-
-            Character res = (Character) fight.invoke(null, legolas, sephiroth);
-
-            assertThat(res.getName()).isEqualTo("Legolas");
-            assertThat(res.getCurrentHealth()).isEqualTo(14);
-            assertThat(sephiroth.getCurrentHealth()).isEqualTo(0);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Character is not correctly defined", e);
         }
     }

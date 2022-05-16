@@ -1,11 +1,12 @@
 exercise:
-  name: AdventureSorcerer
+  name: AdventureTemplar
   quest: 4
-  index: 5
+  index: 6
   files-from-student:
     - Character.java
     - Monster.java
     - Tank.java
     - Healer.java
     - Sorcerer.java
-  test-folder: AdventureSorcererTest
+    - Templar.java
+  test-folder: AdventureTemplarTest

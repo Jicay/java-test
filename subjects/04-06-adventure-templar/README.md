@@ -1,20 +1,27 @@
 # Instructions
 
-We will now implement our first interface through a new class : `Sorcerer` in a file named `Sorcerer.java`.
+We will now implement our second interface through a new class : `Templar` in a file named `Templar.java`.
 
-This class implements the `Healer` interface and inherits from `Character`. It has a new attribute : an integer `healCapacity`.
+This class implements the `Healer` and the `Tank` interfaces and inherits from `Character`.  
+It has two new attributes : 
+* a non modifiable integer `healCapacity`,
+* a non modifiable integer `shield`.
 
 It has a constructor with three parameters : 
 * `name`,
-* `maxHealth`
-* `healCapacity`
+* `maxHealth`,
+* `healCapacity`,
+* `shield`
 
 From the `Healer` interface : 
 * `getHealCapacity` returns the property `healCapacity`
-* `heal` add `healCapacity` to the currentHealth of the `Character` in parameter. Beware that the `currentHealth` can't be greater the `maxHealth`. You may need to change the accessibility of the `currentHealth` param in the `Character` to be able to update the value.
+* `heal` add `healCapacity` to the currentHealth of the `Character` in parameter. Beware that the `currentHealth` can't be greater the `maxHealth`.
 
-You will override the `toString` method with the following format : `<name> is a sorcerer with <currentHealth> HP. It can heal <healCapacity> HP.`
-If it's `currentHeal` is equal to 0, the format is `<name> is a dead sorcerer. So bad, it could heal <healCapacity> HP.`
+From the `Tank` interface : 
+* `getShield` return the property `shield`.
+
+You will override the `toString` method with the following format : `<name> is a strong Templar with <currentHealth> HP. It can heal <healCapacity> HP and has a shield of <shield>`
+If it's `currentHeal` is equal to 0, the format is `<name> has been beaten, even with its <shield> shield. So bad, it could heal <healCapacity> HP.`
 
 # Usage
 
@@ -24,13 +31,12 @@ Here is a possible ExerciseRunner.java to test your function :
 public class ExerciseRunner {
 
     public static void main(String[] args) {
-        Sorcerer gandalf = new Sorcerer("Gandalf", 20, 5);
-        Character frodon = new Character("Frodon", 20);
-        Sorcerer saroumane = new Sorcerer("saroumane", 10, 3);
+        Templar alistair = new Templar("Alistair", 20, 5, 4);
+        Templar roderick = new Templar("Roderick", 10, 3, 2);
 
-        Character.fight(frodon, saroumane);
-        
-        gandalf.heal(frodon);
+        Character.fight(alistair, roderick);
+
+        alistair.heal(alistair);
 
         System.out.println(Character.printStatus());
     }
@@ -43,13 +49,12 @@ $ javac *.java -d build
 $ java -cp build ExerciseRunner 
 ------------------------------------------
 Characters currently fighting : 
- - Gandalf is a sorcerer with 20 HP. It can heal 5 HP.
- - Frodon : 16/20
- - Saroumane is a dead sorcerer. So bad, it could heal 3 HP.
+ - Alistair is a strong Templar with 16 HP. It can heal 5 HP and has a shield of 4.
+ - Roderick has been beaten, even with its 2 shield. So bad, it could heal 3 HP.
 ------------------------------------------
 $ 
 ```
 
 # Notions
-[Class](https://docs.oracle.com/javase/tutorial/java/javaOO/classdecl.html)  
-[Property](https://docs.oracle.com/javase/tutorial/java/javaOO/variables.html)  
+[Implementation](https://docs.oracle.com/javase/tutorial/java/IandI/usinginterface.html)  
+[Inheritance](https://docs.oracle.com/javase/tutorial/java/IandI/subclasses.html)  

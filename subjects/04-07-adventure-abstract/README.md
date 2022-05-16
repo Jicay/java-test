@@ -1,27 +1,22 @@
 # Instructions
 
-We will now implement our second interface through a new class : `Templar` in a file named `Templar.java`.
+Let's change some things : make the `Character` as `abstract`. You can now try to instantiate a Character object, it will fail :)
 
-This class implements the `Healer` and the `Tank` interfaces and inherits from `Character`.  
-It has two new attributes : 
-* a non modifiable integer `healCapacity`,
-* a non modifiable integer `shield`.
+Change the `attack` and `takeDamage` methods : put them as `abstract` too.
 
-It has a constructor with three parameters : 
-* `name`,
-* `maxHealth`,
-* `healCapacity`,
-* `shield`
+Now, if you try to launch some example, it will fail. Indeed, you need to implement both methods in all subclasses. Do this as follow : 
 
-From the `Healer` interface : 
-* `getHealCapacity` returns the property `healCapacity`
-* `heal` add `healCapacity` to the currentHealth of the `Character` in parameter. Beware that the `currentHealth` can't be greater the `maxHealth`.
+Remember that in all cases, the `currentHealth` should not be lower than 0.
 
-From the `Tank` interface : 
-* `getShield` return the property `shield`.
-
-You will override the `toString` method with the following format : `<name> is a strong Templar with <currentHealth> HP. It can heal <healCapacity> HP and has a shield of <shield>`
-If it's `currentHeal` is equal to 0, the format is `<name> has been beaten, even with its <shield> shield. So bad, it could heal <healCapacity> HP.`
+* For Monster class : 
+  * the `attack` method should deal 7 damages to the character as parameter.
+  * the `takeDamage` method should take 80% of all the damages, rounded to the inferior integer.
+* For the `Sorcerer` class : 
+  * the `attack` method should heal itself (using the `heal` method) then deal 10 damages to the character as parameter.
+  * the `takeDamage` method should take all the damages.
+* For the `Templar` class : 
+  * the `attack` method should heal itself (using the `heal` method) then deal 6 damages to the character as parameter.
+  * the `takeDamage` method should take the damage as parameter minus the shield value.
 
 # Usage
 
@@ -31,12 +26,15 @@ Here is a possible ExerciseRunner.java to test your function :
 public class ExerciseRunner {
 
     public static void main(String[] args) {
-        Templar alistair = new Templar("Alistair", 20, 5, 4);
-        Templar roderick = new Templar("Roderick", 10, 3, 2);
+        Templar alistair = new Templar("Alistair", 18, 2, 4);
+        Sorcerer morrigan = new Sorcerer("Morrigan", 21, 5);
+        Monster dragon = new Monster("Dragon", 12);
 
-        Character.fight(alistair, roderick);
-
-        alistair.heal(alistair);
+        dragon.attack(alistair);
+        dragon.attack(morrigan);
+        
+        alistair.attack(dragon);
+        morrigan.attack(dragon);
 
         System.out.println(Character.printStatus());
     }
@@ -48,13 +46,13 @@ and its output :
 $ javac *.java -d build
 $ java -cp build ExerciseRunner 
 ------------------------------------------
-Characters currently fighting : 
- - Alistair is a strong Templar with 16 HP. It can heal 5 HP and has a shield of 4.
- - Roderick has been beaten, even with its 2 shield. So bad, it could heal 3 HP.
+Characters currently fighting :  
+ - Alistair is a strong Templar with 17 HP. It can heal 2 HP and has a shield of 4.
+ - Morrigan is a sorcerer with 19 HP. It can heal 5 HP.
+ - Dragon is a monster and is dead
 ------------------------------------------
 $ 
 ```
 
 # Notions
-[Class](https://docs.oracle.com/javase/tutorial/java/javaOO/classdecl.html)  
-[Property](https://docs.oracle.com/javase/tutorial/java/javaOO/variables.html)  
+[Abstract](https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html)  

@@ -2,7 +2,10 @@
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Map;
@@ -10,145 +13,307 @@ import java.util.Set;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class StarPropertiesTest {
+class AdventureCharacterTest {
 
     @Test
     void class_shouldBePublic() {
-        assertThat(CelestialObject.class)
-                .withFailMessage("CelestialObject should be public")
+        assertThat(Character.class)
+                .withFailMessage("Character should be public")
                 .isPublic();
     }
 
     @Test
-    void class_shouldXPropertyBePublicAndWithCorrectType() {
+    void class_shouldHaveFullParameterConstructor() {
         try {
-            Field field = CelestialObject.class.getDeclaredField("x");
-            assertThat(Modifier.isPublic(field.getModifiers()))
-                    .withFailMessage("x property should be public")
+            Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
+            assertThat(Modifier.isPublic(constructor.getModifiers()))
+                    .withFailMessage("Full parameters constructor should be public")
                     .isTrue();
-            assertThat(Modifier.isFinal(field.getModifiers()))
-                    .withFailMessage("x property should not be final")
-                    .isFalse();
-            assertThat(field.getType())
-                    .withFailMessage("x property should be a double, but was %s", field.getType())
-                    .isEqualTo(double.class);
-        } catch (NoSuchFieldException e) {
-            fail("CelestialObject should have a x property");
+        } catch (NoSuchMethodException e) {
+            fail("Character should have a String and int parameters constructor");
         }
     }
 
     @Test
-    void class_shouldYPropertyBePublicAndWithCorrectType() {
+    void class_shouldHaveCorrectProperties() {
         try {
-            Field field = CelestialObject.class.getDeclaredField("y");
-            assertThat(Modifier.isPublic(field.getModifiers()))
-                    .withFailMessage("y property should be public")
+            Field field = Character.class.getDeclaredField("name");
+            assertThat(Modifier.isPrivate(field.getModifiers()))
+                    .withFailMessage("name property should be private")
                     .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
-                    .withFailMessage("y property should not be final")
-                    .isFalse();
-            assertThat(field.getType())
-                    .withFailMessage("y property should be a double, but was %s", field.getType())
-                    .isEqualTo(double.class);
-        } catch (NoSuchFieldException e) {
-            fail("CelestialObject should have y x property");
-        }
-    }
-
-    @Test
-    void class_shouldZPropertyBePublicAndWithCorrectType() {
-        try {
-            Field field = CelestialObject.class.getDeclaredField("z");
-            assertThat(Modifier.isPublic(field.getModifiers()))
-                    .withFailMessage("z property should be public")
+                    .withFailMessage("name property should be final")
                     .isTrue();
-            assertThat(Modifier.isFinal(field.getModifiers()))
-                    .withFailMessage("z property should not be final")
-                    .isFalse();
-            assertThat(field.getType())
-                    .withFailMessage("z property should be a double, but was %s", field.getType())
-                    .isEqualTo(double.class);
-        } catch (NoSuchFieldException e) {
-            fail("CelestialObject should have a z property");
-        }
-    }
-
-    @Test
-    void class_shouldNamePropertyBePublicAndWithCorrectType() {
-        try {
-            Field field = CelestialObject.class.getDeclaredField("name");
-            assertThat(Modifier.isPublic(field.getModifiers()))
-                    .withFailMessage("name property should be public")
-                    .isTrue();
-            assertThat(Modifier.isFinal(field.getModifiers()))
-                    .withFailMessage("name property should not be final")
-                    .isFalse();
             assertThat(field.getType())
                     .withFailMessage("name property should be a String, but was %s", field.getType())
                     .isEqualTo(String.class);
         } catch (NoSuchFieldException e) {
-            fail("CelestialObject should have a name property");
+            fail("Character should have a name property");
+        }
+        try {
+            Field field = Character.class.getDeclaredField("currentHealth");
+            assertThat(Modifier.isPrivate(field.getModifiers()))
+                    .withFailMessage("currentHealth property should be private")
+                    .isTrue();
+            assertThat(Modifier.isFinal(field.getModifiers()))
+                    .withFailMessage("currentHealth property should not be final")
+                    .isFalse();
+            assertThat(field.getType())
+                    .withFailMessage("currentHealth property should be a int, but was %s", field.getType())
+                    .isEqualTo(int.class);
+        } catch (NoSuchFieldException e) {
+            fail("Character should have a currentHealth property");
+        }
+        try {
+            Field field = Character.class.getDeclaredField("maxHealth");
+            assertThat(Modifier.isPrivate(field.getModifiers()))
+                    .withFailMessage("maxHealth property should be private")
+                    .isTrue();
+            assertThat(Modifier.isFinal(field.getModifiers()))
+                    .withFailMessage("maxHealth property should be final")
+                    .isTrue();
+            assertThat(field.getType())
+                    .withFailMessage("maxHealth property should be a int, but was %s", field.getType())
+                    .isEqualTo(int.class);
+        } catch (NoSuchFieldException e) {
+            fail("Character should have a maxHealth property");
         }
     }
 
     @Test
-    void object_shouldBeCorrectlyInitialized() {
-        CelestialObject celestialObject = new CelestialObject();
-
+    void class_shouldHaveGetters() {
         try {
-            Field fieldX = CelestialObject.class.getDeclaredField("x");
-            Field fieldY = CelestialObject.class.getDeclaredField("y");
-            Field fieldZ = CelestialObject.class.getDeclaredField("z");
-            Field fieldName = CelestialObject.class.getDeclaredField("name");
-
-            assertThat(fieldX.get(celestialObject))
-                    .withFailMessage("x property should be initialized at 0.0")
-                    .isEqualTo(0.0);
-            assertThat(fieldY.get(celestialObject))
-                    .withFailMessage("y property should be initialized at 0.0")
-                    .isEqualTo(0.0);
-            assertThat(fieldZ.get(celestialObject))
-                    .withFailMessage("z property should be initialized at 0.0")
-                    .isEqualTo(0.0);
-            assertThat(fieldName.get(celestialObject))
-                    .withFailMessage("name property should be initialized at null")
-                    .isNull();
-
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            fail("CelestialObject is not correctly defined", e);
+            Method getter = Character.class.getDeclaredMethod("getName");
+            assertThat(Modifier.isPublic(getter.getModifiers()))
+                    .withFailMessage("getName method should be public")
+                    .isTrue();
+            assertThat(getter.getReturnType())
+                    .withFailMessage("getName method should return String")
+                    .isEqualTo(String.class);
+        } catch (NoSuchMethodException e) {
+            fail("Character should have getName method");
+        }
+        try {
+            Method getter = Character.class.getDeclaredMethod("getCurrentHealth");
+            assertThat(Modifier.isPublic(getter.getModifiers()))
+                    .withFailMessage("getCurrentHealth method should be public")
+                    .isTrue();
+            assertThat(getter.getReturnType())
+                    .withFailMessage("getCurrentHealth method should return int")
+                    .isEqualTo(int.class);
+        } catch (NoSuchMethodException e) {
+            fail("Character should have getCurrentHealth method");
+        }
+        try {
+            Method getter = Character.class.getDeclaredMethod("getMaxHealth");
+            assertThat(Modifier.isPublic(getter.getModifiers()))
+                    .withFailMessage("getMaxHealth method should be public")
+                    .isTrue();
+            assertThat(getter.getReturnType())
+                    .withFailMessage("getMaxHealth method should return int")
+                    .isEqualTo(int.class);
+        } catch (NoSuchMethodException e) {
+            fail("Character should have getMaxHealth method");
         }
     }
 
     @Test
-    void object_shouldBeCorrectlyModified() {
-        CelestialObject celestialObject = new CelestialObject();
+    void class_shouldHaveAttackMethod() {
+        try {
+            Method getter = Character.class.getDeclaredMethod("attack", Character.class);
+            assertThat(Modifier.isPublic(getter.getModifiers()))
+                    .withFailMessage("attack method should be public")
+                    .isTrue();
+            assertThat(getter.getReturnType())
+                    .withFailMessage("attack method should return nothing")
+                    .isEqualTo(void.class);
+        } catch (NoSuchMethodException e) {
+            fail("Character should have attack method");
+        }
+        try {
+            Method getter = Character.class.getDeclaredMethod("takeDamage", int.class);
+            assertThat(Modifier.isPublic(getter.getModifiers()))
+                    .withFailMessage("takeDamage method should be public")
+                    .isTrue();
+            assertThat(getter.getReturnType())
+                    .withFailMessage("takeDamage method should return nothing")
+                    .isEqualTo(void.class);
+        } catch (NoSuchMethodException e) {
+            fail("Character should have takeDamage method");
+        }
+    }
+
+    @Test
+    void object_takeDamage() {
 
         try {
-            Field fieldX = CelestialObject.class.getDeclaredField("x");
-            Field fieldY = CelestialObject.class.getDeclaredField("y");
-            Field fieldZ = CelestialObject.class.getDeclaredField("z");
-            Field fieldName = CelestialObject.class.getDeclaredField("name");
+            Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
+            Character legolas = constructor.newInstance("Legolas", 20);
+            Character sephiroth = constructor.newInstance("Sephiroth", 10);
 
-            fieldX.set(celestialObject, 14.9);
-            fieldY.set(celestialObject, 98.32);
-            fieldZ.set(celestialObject, -123.938);
-            fieldName.set(celestialObject, "Soleil");
+            Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
+            Method getMaxHealth = Character.class.getDeclaredMethod("getMaxHealth");
+            Method getName = Character.class.getDeclaredMethod("getName");
+            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
+            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
 
-            assertThat(fieldX.get(celestialObject))
-                    .withFailMessage("x property should be updated to 14.9")
-                    .isEqualTo(14.9);
-            assertThat(fieldY.get(celestialObject))
-                    .withFailMessage("y property should be updated to 98.32")
-                    .isEqualTo(98.32);
-            assertThat(fieldZ.get(celestialObject))
-                    .withFailMessage("z property should be updated to -123.938")
-                    .isEqualTo(-123.938);
-            assertThat(fieldName.get(celestialObject))
-                    .withFailMessage("name property should be updated to Soleil")
-                    .isEqualTo("Soleil");
+            assertThat(getCurrentHealth.invoke(legolas))
+                    .withFailMessage("Legolas current health should be 20")
+                    .isEqualTo(20);
+            assertThat(getMaxHealth.invoke(legolas))
+                    .withFailMessage("Legolas max health should be 20")
+                    .isEqualTo(20);
+            assertThat(getName.invoke(legolas))
+                    .withFailMessage("Legolas name should be Legolas")
+                    .isEqualTo("Legolas");
 
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            fail("CelestialObject is not correctly defined", e);
+            assertThat(getCurrentHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth current health should be 10")
+                    .isEqualTo(10);
+            assertThat(getMaxHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth max health should be 10")
+                    .isEqualTo(10);
+            assertThat(getName.invoke(sephiroth))
+                    .withFailMessage("Sephiroth name should be Sephiroth")
+                    .isEqualTo("Sephiroth");
+
+            attack.invoke(legolas, sephiroth);
+
+            assertThat(getCurrentHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth current health should be 1")
+                    .isEqualTo(1);
+            assertThat(getMaxHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth max health should be 10")
+                    .isEqualTo(10);
+            assertThat(getName.invoke(sephiroth))
+                    .withFailMessage("Sephiroth name should be Sephiroth")
+                    .isEqualTo("Sephiroth");
+
+            attack.invoke(legolas, sephiroth);
+
+            assertThat(getCurrentHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth current health should be 0")
+                    .isEqualTo(0);
+            assertThat(getMaxHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth max health should be 10")
+                    .isEqualTo(10);
+            assertThat(getName.invoke(sephiroth))
+                    .withFailMessage("Sephiroth name should be Sephiroth")
+                    .isEqualTo("Sephiroth");
+
+            assertThat(getCurrentHealth.invoke(legolas))
+                    .withFailMessage("Legolas current health should be 20")
+                    .isEqualTo(20);
+            assertThat(getMaxHealth.invoke(legolas))
+                    .withFailMessage("Legolas max health should be 20")
+                    .isEqualTo(20);
+            assertThat(getName.invoke(legolas))
+                    .withFailMessage("Legolas name should be Legolas")
+                    .isEqualTo("Legolas");
+
+            takeDamage.invoke(legolas, 15);
+
+            assertThat(getCurrentHealth.invoke(legolas))
+                    .withFailMessage("Legolas current health should be 5")
+                    .isEqualTo(5);
+            assertThat(getMaxHealth.invoke(legolas))
+                    .withFailMessage("Legolas max health should be 20")
+                    .isEqualTo(20);
+            assertThat(getName.invoke(legolas))
+                    .withFailMessage("Legolas name should be Legolas")
+                    .isEqualTo("Legolas");
+
+
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            fail("Character is not correctly defined", e);
+        }
+    }
+    @Test
+    void object_methods() {
+
+        try {
+            Constructor<Character> constructor = Character.class.getDeclaredConstructor(String.class, int.class);
+            Character legolas = constructor.newInstance("Legolas", 20);
+            Character sephiroth = constructor.newInstance("Sephiroth", 10);
+
+            Method getCurrentHealth = Character.class.getDeclaredMethod("getCurrentHealth");
+            Method getMaxHealth = Character.class.getDeclaredMethod("getMaxHealth");
+            Method getName = Character.class.getDeclaredMethod("getName");
+            Method attack = Character.class.getDeclaredMethod("attack", Character.class);
+            Method takeDamage = Character.class.getDeclaredMethod("takeDamage", int.class);
+
+            assertThat(getCurrentHealth.invoke(legolas))
+                    .withFailMessage("Legolas current health should be 20")
+                    .isEqualTo(20);
+            assertThat(getMaxHealth.invoke(legolas))
+                    .withFailMessage("Legolas max health should be 20")
+                    .isEqualTo(20);
+            assertThat(getName.invoke(legolas))
+                    .withFailMessage("Legolas name should be Legolas")
+                    .isEqualTo("Legolas");
+
+            assertThat(getCurrentHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth current health should be 10")
+                    .isEqualTo(10);
+            assertThat(getMaxHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth max health should be 10")
+                    .isEqualTo(10);
+            assertThat(getName.invoke(sephiroth))
+                    .withFailMessage("Sephiroth name should be Sephiroth")
+                    .isEqualTo("Sephiroth");
+
+            attack.invoke(legolas, sephiroth);
+
+            assertThat(getCurrentHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth current health should be 1")
+                    .isEqualTo(1);
+            assertThat(getMaxHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth max health should be 10")
+                    .isEqualTo(10);
+            assertThat(getName.invoke(sephiroth))
+                    .withFailMessage("Sephiroth name should be Sephiroth")
+                    .isEqualTo("Sephiroth");
+
+            attack.invoke(legolas, sephiroth);
+
+            assertThat(getCurrentHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth current health should be 0")
+                    .isEqualTo(0);
+            assertThat(getMaxHealth.invoke(sephiroth))
+                    .withFailMessage("Sephiroth max health should be 10")
+                    .isEqualTo(10);
+            assertThat(getName.invoke(sephiroth))
+                    .withFailMessage("Sephiroth name should be Sephiroth")
+                    .isEqualTo("Sephiroth");
+
+            assertThat(getCurrentHealth.invoke(legolas))
+                    .withFailMessage("Legolas current health should be 20")
+                    .isEqualTo(20);
+            assertThat(getMaxHealth.invoke(legolas))
+                    .withFailMessage("Legolas max health should be 20")
+                    .isEqualTo(20);
+            assertThat(getName.invoke(legolas))
+                    .withFailMessage("Legolas name should be Legolas")
+                    .isEqualTo("Legolas");
+
+            takeDamage.invoke(legolas, 15);
+
+            assertThat(getCurrentHealth.invoke(legolas))
+                    .withFailMessage("Legolas current health should be 5")
+                    .isEqualTo(5);
+            assertThat(getMaxHealth.invoke(legolas))
+                    .withFailMessage("Legolas max health should be 20")
+                    .isEqualTo(20);
+            assertThat(getName.invoke(legolas))
+                    .withFailMessage("Legolas name should be Legolas")
+                    .isEqualTo("Legolas");
+
+
+            assertThat(legolas.toString()).isEqualTo("Legolas : 5/20");
+            assertThat(sephiroth.toString()).isEqualTo("Sephiroth : KO");
+
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            fail("Character is not correctly defined", e);
         }
     }
 }
