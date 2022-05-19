@@ -1,9 +1,8 @@
 # Instructions
  
-Now, we will update the accessibility of the properties. 
-We need to put them as `private` properties.  
+Now, we will give access to our property through dedicated method : 
 
-In order to still have access to them, we need to implement getters and setters for each property : 
+We will to implement getters and setters for each property : 
 * `getX` and `setX` for the `x` property
 * `getY` and `setY` for the `y` property
 * `getZ` and `setZ` for the `z` property

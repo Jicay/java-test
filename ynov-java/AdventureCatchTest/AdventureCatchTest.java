@@ -1,6 +1,4 @@
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Fail.fail;
 
 import java.lang.reflect.Constructor;
@@ -529,19 +527,35 @@ class AdventureCatchTest {
             Monster troll = constructor.newInstance("Troll", 20, null);
             Monster gobelin = constructor.newInstance("Gobelin", 10, null);
 
-            assertThatNoException().isThrownBy(() -> takeDamage.invoke(troll, 50));
-            assertThatThrownBy(() -> takeDamage.invoke(troll, 50))
-                    .withFailMessage("The takeDamage call of an already dead monster should throw exception")
-                    .getCause()
-                    .isInstanceOf(DeadCharacterException.class)
-                    .hasMessage("The monster Troll is dead.");
+            try {
+                takeDamage.invoke(troll, 50);
+            } catch (Exception e) {
+                fail("No exception should be thrown with first takeDamage");
+            }
 
-            assertThatThrownBy(() -> attack.invoke(troll, gobelin))
-                    .withFailMessage("The attack call of an already dead monster should throw exception")
-                    .getCause()
-                    .isInstanceOf(DeadCharacterException.class)
-                    .hasMessage("The monster Troll is dead.");
+            try {
+                takeDamage.invoke(troll, 50);
+                fail("The takeDamage call of an already dead monster should throw exception");
+            } catch (Exception e) {
+                assertThat(e.getCause())
+                        .withFailMessage("Exception should be DeadCharacterException")
+                        .isInstanceOf(DeadCharacterException.class);
+                assertThat(e.getCause().getMessage())
+                        .withFailMessage("The monster error message is not correct")
+                        .isEqualTo("The monster Troll is dead.");
+            }
 
+            try {
+                attack.invoke(troll, gobelin);
+                fail("The attack call of an already dead monster should throw exception");
+            } catch (Exception e) {
+                assertThat(e.getCause())
+                        .withFailMessage("Exception should be DeadCharacterException")
+                        .isInstanceOf(DeadCharacterException.class);
+                assertThat(e.getCause().getMessage())
+                        .withFailMessage("The monster error message is not correct")
+                        .isEqualTo("The monster Troll is dead.");
+            }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Monster is not correctly defined", e);
         }
@@ -559,25 +573,47 @@ class AdventureCatchTest {
             Sorcerer merlin = constructor.newInstance("Merlin", 20, 5, null);
             Sorcerer morgane = constructor.newInstance("Morgane", 10, 3, null);
 
-            assertThatNoException().isThrownBy(() -> takeDamage.invoke(merlin, 50));
+            try {
+                takeDamage.invoke(merlin, 50);
+            } catch (Exception e) {
+                fail("No exception should be thrown with first takeDamage");
+            }
 
-            assertThatThrownBy(() -> takeDamage.invoke(merlin, 50))
-                    .withFailMessage("The takeDamage call of an already dead sorcerer should throw exception")
-                    .getCause()
-                    .isInstanceOf(DeadCharacterException.class)
-                    .hasMessage("The sorcerer Merlin is dead.");
+            try {
+                takeDamage.invoke(merlin, 50);
+                fail("The takeDamage call of an already dead sorcerer should throw exception");
+            } catch (Exception e) {
+                assertThat(e.getCause())
+                        .withFailMessage("Exception should be DeadCharacterException")
+                        .isInstanceOf(DeadCharacterException.class);
+                assertThat(e.getCause().getMessage())
+                        .withFailMessage("The sorcerer error message is not correct")
+                        .isEqualTo("The sorcerer Merlin is dead.");
+            }
 
-            assertThatThrownBy(() -> attack.invoke(merlin, morgane))
-                    .withFailMessage("The attack call of an already dead sorcerer should throw exception")
-                    .getCause()
-                    .isInstanceOf(DeadCharacterException.class)
-                    .hasMessage("The sorcerer Merlin is dead.");
+            try {
+                attack.invoke(merlin, morgane);
+                fail("The attack call of an already dead sorcerer should throw exception");
+            } catch (Exception e) {
+                assertThat(e.getCause())
+                        .withFailMessage("Exception should be DeadCharacterException")
+                        .isInstanceOf(DeadCharacterException.class);
+                assertThat(e.getCause().getMessage())
+                        .withFailMessage("The sorcerer error message is not correct")
+                        .isEqualTo("The sorcerer Merlin is dead.");
+            }
 
-            assertThatThrownBy(() -> heal.invoke(merlin, morgane))
-                    .withFailMessage("The heal call of an already dead sorcerer should throw exception")
-                    .getCause()
-                    .isInstanceOf(DeadCharacterException.class)
-                    .hasMessage("The sorcerer Merlin is dead.");
+            try {
+                heal.invoke(merlin, morgane);
+                fail("The heal call of an already dead sorcerer should throw exception");
+            } catch (Exception e) {
+                assertThat(e.getCause())
+                        .withFailMessage("Exception should be DeadCharacterException")
+                        .isInstanceOf(DeadCharacterException.class);
+                assertThat(e.getCause().getMessage())
+                        .withFailMessage("The sorcerer error message is not correct")
+                        .isEqualTo("The sorcerer Merlin is dead.");
+            }
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Monster is not correctly defined", e);
@@ -596,25 +632,47 @@ class AdventureCatchTest {
             Templar perceval = constructor.newInstance("Perceval", 20, 5, 2, null);
             Templar gauvin = constructor.newInstance("Gauvin", 10, 3, 2, null);
 
-            assertThatNoException().isThrownBy(() -> takeDamage.invoke(perceval, 50));
+            try {
+                takeDamage.invoke(perceval, 50);
+            } catch (Exception e) {
+                fail("No exception should be thrown with first takeDamage");
+            }
 
-            assertThatThrownBy(() -> takeDamage.invoke(perceval, 50))
-                    .withFailMessage("The takeDamage call of an already dead templar should throw exception")
-                    .getCause()
-                    .isInstanceOf(DeadCharacterException.class)
-                    .hasMessage("The templar Perceval is dead.");
+            try {
+                takeDamage.invoke(perceval, 50);
+                fail("The takeDamage call of an already dead templar should throw exception");
+            } catch (Exception e) {
+                assertThat(e.getCause())
+                        .withFailMessage("Exception should be DeadCharacterException")
+                        .isInstanceOf(DeadCharacterException.class);
+                assertThat(e.getCause().getMessage())
+                        .withFailMessage("The templar error message is not correct")
+                        .isEqualTo("The templar Perceval is dead.");
+            }
 
-            assertThatThrownBy(() -> attack.invoke(perceval, gauvin))
-                    .withFailMessage("The attack call of an already dead templar should throw exception")
-                    .getCause()
-                    .isInstanceOf(DeadCharacterException.class)
-                    .hasMessage("The templar Perceval is dead.");
+            try {
+                attack.invoke(perceval, gauvin);
+                fail("The attack call of an already dead templar should throw exception");
+            } catch (Exception e) {
+                assertThat(e.getCause())
+                        .withFailMessage("Exception should be DeadCharacterException")
+                        .isInstanceOf(DeadCharacterException.class);
+                assertThat(e.getCause().getMessage())
+                        .withFailMessage("The templar error message is not correct")
+                        .isEqualTo("The templar Perceval is dead.");
+            }
 
-            assertThatThrownBy(() -> heal.invoke(perceval, gauvin))
-                    .withFailMessage("The heal call of an already dead templar should throw exception")
-                    .getCause()
-                    .isInstanceOf(DeadCharacterException.class)
-                    .hasMessage("The templar Perceval is dead.");
+            try {
+                heal.invoke(perceval, gauvin);
+                fail("The heal call of an already dead templar should throw exception");
+            } catch (Exception e) {
+                assertThat(e.getCause())
+                        .withFailMessage("Exception should be DeadCharacterException")
+                        .isInstanceOf(DeadCharacterException.class);
+                assertThat(e.getCause().getMessage())
+                        .withFailMessage("The templar error message is not correct")
+                        .isEqualTo("The templar Perceval is dead.");
+            }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Templar is not correctly defined", e);
         }

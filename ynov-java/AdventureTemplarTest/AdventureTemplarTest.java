@@ -410,7 +410,9 @@ class AdventureTemplarTest {
             assertThat(getShield.invoke(dumbledore))
                     .withFailMessage("Shield of sorcerer should be 4, but was %d", getShield.invoke(dumbledore))
                     .isEqualTo(4);
-            assertThat(dumbledore.toString()).isEqualTo("Dumbledore is a strong Templar with 30 HP. It can heal 8 HP and has a shield of 4.");
+            assertThat(dumbledore.toString())
+                    .withFailMessage("Templar toString is not correct : %s", dumbledore.toString())
+                    .isEqualTo("Dumbledore is a strong Templar with 30 HP. It can heal 8 HP and has a shield of 4.");
 
             assertThat(getName.invoke(ronWeasley))
                     .withFailMessage("Name of sorcerer should be Ron Weasley, but was %s", getName.invoke(ronWeasley))
@@ -427,11 +429,15 @@ class AdventureTemplarTest {
             assertThat(getShield.invoke(ronWeasley))
                     .withFailMessage("Shield of sorcerer should be 2, but was %d", getShield.invoke(ronWeasley))
                     .isEqualTo(2);
-            assertThat(ronWeasley.toString()).isEqualTo("Ron Weasley has been beaten, even with its 2 shield. So bad, it could heal 1 HP.");
+            assertThat(ronWeasley.toString())
+                    .withFailMessage("Templar toString is not correct : %s", ronWeasley.toString())
+                    .isEqualTo("Ron Weasley has been beaten, even with its 2 shield. So bad, it could heal 1 HP.");
 
             String print = (String) printStatus.invoke(null);
 
-            assertThat(print).isEqualTo("""
+            assertThat(print)
+                    .withFailMessage("printStatus is not correct")
+                    .isEqualTo("""
                 ------------------------------------------
                 Characters currently fighting :
                  - Dumbledore is a strong Templar with 30 HP. It can heal 8 HP and has a shield of 4.

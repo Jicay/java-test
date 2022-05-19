@@ -498,7 +498,9 @@ class AdventureWeaponTest {
             assertThat(getDamage.invoke(excalibur))
                     .withFailMessage("The damage of the weapon should be 42 but was %d", getDamage.invoke(excalibur))
                     .isEqualTo(42);
-            assertThat(excalibur.toString()).isEqualTo("Excalibur deals 42 damages");
+            assertThat(excalibur.toString())
+                    .withFailMessage("Weapon toString is not correct : %s", excalibur.toString())
+                    .isEqualTo("Excalibur deals 42 damages");
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Weapon is not correctly defined", e);

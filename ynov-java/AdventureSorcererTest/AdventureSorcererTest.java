@@ -352,7 +352,9 @@ class AdventureSorcererTest {
             assertThat(getHealCapacity.invoke(dumbledore))
                     .withFailMessage("Heal Capacity of sorcerer should be 8, but was %d", getHealCapacity.invoke(dumbledore))
                     .isEqualTo(8);
-            assertThat(dumbledore.toString()).isEqualTo("Dumbledore is a sorcerer with 30 HP. It can heal 8 HP.");
+            assertThat(dumbledore.toString())
+                    .withFailMessage("Sorcerer toString is not correct : %s", dumbledore.toString())
+                    .isEqualTo("Dumbledore is a sorcerer with 30 HP. It can heal 8 HP.");
 
             assertThat(getName.invoke(ronWeasley))
                     .withFailMessage("Name of sorcerer should be Ron Weasley, but was %s", getName.invoke(ronWeasley))
@@ -366,11 +368,15 @@ class AdventureSorcererTest {
             assertThat(getHealCapacity.invoke(ronWeasley))
                     .withFailMessage("Heal Capacity of sorcerer should be 1, but was %d", getHealCapacity.invoke(ronWeasley))
                     .isEqualTo(1);
-            assertThat(ronWeasley.toString()).isEqualTo("Ron Weasley is a dead sorcerer. So bad, it could heal 1 HP.");
+            assertThat(ronWeasley.toString())
+                    .withFailMessage("Sorcerer toString is not correct : %s", ronWeasley.toString())
+                    .isEqualTo("Ron Weasley is a dead sorcerer. So bad, it could heal 1 HP.");
 
             String print = (String) printStatus.invoke(null);
 
-            assertThat(print).isEqualTo("""
+            assertThat(print)
+                    .withFailMessage("printStatus is not correct")
+                    .isEqualTo("""
                 ------------------------------------------
                 Characters currently fighting :
                  - Dumbledore is a sorcerer with 30 HP. It can heal 8 HP.

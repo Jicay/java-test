@@ -205,7 +205,9 @@ class AdventureUtilsTest {
             Method attack = Character.class.getDeclaredMethod("attack", Character.class);
             String firstPrint = (String) printStatus.invoke(null);
 
-            assertThat(firstPrint).isEqualTo("""
+            assertThat(firstPrint)
+                    .withFailMessage("Printstatus is not correct")
+                    .isEqualTo("""
                 ------------------------------------------
                 Nobody's fighting right now !
                 ------------------------------------------""");
@@ -219,7 +221,9 @@ class AdventureUtilsTest {
 
             String lastPrint = (String) printStatus.invoke(null);
 
-            assertThat(lastPrint).isEqualTo("""
+            assertThat(lastPrint)
+                    .withFailMessage("Printstatus is not correct")
+                    .isEqualTo("""
                 ------------------------------------------
                 Characters currently fighting :
                  - Legolas : 20/20

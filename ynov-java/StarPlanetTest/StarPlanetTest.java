@@ -49,9 +49,6 @@ class StarPlanetTest {
     void class_shouldXPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("x");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("x property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("x property should not be final")
                     .isFalse();
@@ -67,9 +64,6 @@ class StarPlanetTest {
     void class_shouldYPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("y");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("y property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("y property should not be final")
                     .isFalse();
@@ -85,9 +79,6 @@ class StarPlanetTest {
     void class_shouldZPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("z");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("z property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("z property should not be final")
                     .isFalse();
@@ -103,9 +94,6 @@ class StarPlanetTest {
     void class_shouldNamePropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("name");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("name property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("name property should not be final")
                     .isFalse();
@@ -442,17 +430,37 @@ class StarPlanetTest {
             Planet planet = constructor.newInstance();
             Planet planetFull = constructorFull.newInstance("Tatooine", 12.389, 48398.12, -123.843, star);
 
-            assertThat(planet.getX()).isEqualTo(0.0);
-            assertThat(planet.getY()).isEqualTo(0.0);
-            assertThat(planet.getZ()).isEqualTo(0.0);
-            assertThat(planet.getName()).isEqualTo("Soleil");
-            assertThat(planet.getCenterStar()).isEqualTo(new Star());
+            assertThat(planet.getX())
+                    .withFailMessage("x should be %f but was %f", 0.0, star.getX())
+                    .isEqualTo(0.0);
+            assertThat(planet.getY())
+                    .withFailMessage("y should be %f but was %f", 0.0, star.getY())
+                    .isEqualTo(0.0);
+            assertThat(planet.getZ())
+                    .withFailMessage("z should be %f but was %f", 0.0, star.getZ())
+                    .isEqualTo(0.0);
+            assertThat(planet.getName())
+                    .withFailMessage("name should be Soleil but was %s", star.getName())
+                    .isEqualTo("Soleil");
+            assertThat(planet.getCenterStar())
+                    .withFailMessage("centerStar is not correct")
+                    .isEqualTo(new Star());
 
-            assertThat(planetFull.getX()).isEqualTo(12.389);
-            assertThat(planetFull.getY()).isEqualTo(48398.12);
-            assertThat(planetFull.getZ()).isEqualTo(-123.843);
-            assertThat(planetFull.getName()).isEqualTo("Tatooine");
-            assertThat(planetFull.getCenterStar()).isEqualTo(star);
+            assertThat(planetFull.getX())
+                    .withFailMessage("x should be %f but was %f", 12.389, star.getX())
+                    .isEqualTo(12.389);
+            assertThat(planetFull.getY())
+                    .withFailMessage("y should be %f but was %f", 48398.12, star.getY())
+                    .isEqualTo(48398.12);
+            assertThat(planetFull.getZ())
+                    .withFailMessage("z should be %f but was %f", -123.843, star.getZ())
+                    .isEqualTo(-123.843);
+            assertThat(planetFull.getName())
+                    .withFailMessage("name should be Tatooine but was %s", star.getName())
+                    .isEqualTo("Tatooine");
+            assertThat(planetFull.getCenterStar())
+                    .withFailMessage("centerStar is not correct")
+                    .isEqualTo(star);
 
         } catch (IllegalAccessException | NoSuchMethodException | InstantiationException |
                  InvocationTargetException e) {
@@ -509,17 +517,20 @@ class StarPlanetTest {
                     .withFailMessage("Two similar objects with Z different should have different hashCode")
                     .isFalse();
             assertThat(planet1.equals(planet6))
-                    .withFailMessage("Two similar objects with name different should not be equals").isFalse();
+                    .withFailMessage("Two similar objects with name different should not be equals")
+                    .isFalse();
             assertThat(planet1.hashCode() == planet6.hashCode())
                     .withFailMessage("Two similar objects with name different should have different hashCode")
                     .isFalse();
             assertThat(planet1.equals(planet7))
-                    .withFailMessage("Two similar objects with centerStar different should not be equals").isFalse();
+                    .withFailMessage("Two similar objects with centerStar different should not be equals")
+                    .isFalse();
             assertThat(planet1.hashCode() == planet7.hashCode())
                     .withFailMessage("Two similar objects with centerStar different should have different hashCode")
                     .isFalse();
             assertThat(planet1.equals(celestialObject))
-                    .withFailMessage("Similar Planet and CelestialObject should not be equals").isFalse();
+                    .withFailMessage("Similar Planet and CelestialObject should not be equals")
+                    .isFalse();
             assertThat(planet1.hashCode() == celestialObject.hashCode())
                     .withFailMessage("Similar Planet and CelestialObject should have different hashCode")
                     .isFalse();
@@ -540,8 +551,12 @@ class StarPlanetTest {
             Star star = constructorStar.newInstance("Altair", 12.45, 328.8437, -328.3923, 13.92);
             Planet planet = constructor.newInstance("Palaven", 43.23, -123.43, 38.239, star);
 
-            assertThat(celestialObject.toString()).isEqualTo("Altair is positioned at (12.450, 328.844, -328.392)");
-            assertThat(planet.toString()).isEqualTo("Palaven circles around Altair at the 583.024 AU");
+            assertThat(celestialObject.toString())
+                    .withFailMessage("toString of celestialObject is not correct : %s", celestialObject.toString())
+                    .isEqualTo("Altair is positioned at (12.450, 328.844, -328.392)");
+            assertThat(planet.toString())
+                    .withFailMessage("toString of Planet is not correct : %s", planet.toString())
+                    .isEqualTo("Palaven circles around Altair at the 583.024 AU");
 
         } catch (IllegalAccessException | NoSuchMethodException | InstantiationException |
                  InvocationTargetException e) {

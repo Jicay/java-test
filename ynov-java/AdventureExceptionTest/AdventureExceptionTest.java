@@ -515,7 +515,9 @@ class AdventureExceptionTest {
             Monster troll = constructorMonster.newInstance("Troll", 20, null);
             DeadCharacterException exception = constructor.newInstance(troll);
 
-            assertThat(getMessage.invoke(exception)).isEqualTo("The monster Troll is dead.");
+            assertThat(getMessage.invoke(exception))
+                    .withFailMessage("The message of exception for monster is not correct : %s", getMessage.invoke(exception))
+                    .isEqualTo("The monster Troll is dead.");
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Monster is not correctly defined", e);
@@ -533,7 +535,9 @@ class AdventureExceptionTest {
             Sorcerer saroumane = constructorSorcerer.newInstance("Saroumane", 20, 4, null);
             DeadCharacterException exception = constructor.newInstance(saroumane);
 
-            assertThat(getMessage.invoke(exception)).isEqualTo("The sorcerer Saroumane is dead.");
+            assertThat(getMessage.invoke(exception))
+                    .withFailMessage("The message of exception for sorcerer is not correct : %s", getMessage.invoke(exception))
+                    .isEqualTo("The sorcerer Saroumane is dead.");
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Sorcerer is not correctly defined", e);
         }
@@ -550,7 +554,9 @@ class AdventureExceptionTest {
             Templar lancelot = constructorTemplar.newInstance("Lacelot", 20, 4, 2, null);
             DeadCharacterException exception = constructor.newInstance(lancelot);
 
-            assertThat(getMessage.invoke(exception)).isEqualTo("The templar Lacelot is dead.");
+            assertThat(getMessage.invoke(exception))
+                    .withFailMessage("The message of exception for templar is not correct : %s", getMessage.invoke(exception))
+                    .isEqualTo("The templar Lacelot is dead.");
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Templar is not correctly defined", e);
         }

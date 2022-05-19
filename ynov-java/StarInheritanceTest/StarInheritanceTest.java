@@ -38,9 +38,6 @@ class StarInheritanceTest {
     void class_shouldXPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("x");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("x property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("x property should not be final")
                     .isFalse();
@@ -56,9 +53,6 @@ class StarInheritanceTest {
     void class_shouldYPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("y");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("y property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("y property should not be final")
                     .isFalse();
@@ -74,9 +68,6 @@ class StarInheritanceTest {
     void class_shouldZPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("z");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("z property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("z property should not be final")
                     .isFalse();
@@ -92,9 +83,6 @@ class StarInheritanceTest {
     void class_shouldNamePropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("name");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("name property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("name property should not be final")
                     .isFalse();
@@ -332,14 +320,26 @@ class StarInheritanceTest {
             Constructor<Star> constructor = Star.class.getDeclaredConstructor();
             Star star = constructor.newInstance();
 
-            assertThat(star.getMagnitude()).isEqualTo(0.0);
-            assertThat(star.getX()).isEqualTo(0.0);
-            assertThat(star.getY()).isEqualTo(0.0);
-            assertThat(star.getZ()).isEqualTo(0.0);
-            assertThat(star.getName()).isEqualTo("Soleil");
+            assertThat(star.getMagnitude())
+                    .withFailMessage("magnitude should be %f but was %f", 0.0, star.getMagnitude())
+                    .isEqualTo(0.0);
+            assertThat(star.getX())
+                    .withFailMessage("x should be %f but was %f", 0.0, star.getX())
+                    .isEqualTo(0.0);
+            assertThat(star.getY())
+                    .withFailMessage("y should be %f but was %f", 0.0, star.getY())
+                    .isEqualTo(0.0);
+            assertThat(star.getZ())
+                    .withFailMessage("z should be %f but was %f", 0.0, star.getZ())
+                    .isEqualTo(0.0);
+            assertThat(star.getName())
+                    .withFailMessage("name should be Soleil but was %s", star.getName())
+                    .isEqualTo("Soleil");
 
             star.setMagnitude(14.9);
-            assertThat(star.getMagnitude()).isEqualTo(14.9);
+            assertThat(star.getMagnitude())
+                    .withFailMessage("magnitude should be %f but was %f", 14.9, star.getMagnitude())
+                    .isEqualTo(14.9);
 
         } catch (IllegalAccessException | NoSuchMethodException | InstantiationException |
                  InvocationTargetException e) {

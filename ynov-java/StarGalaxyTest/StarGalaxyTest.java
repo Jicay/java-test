@@ -57,9 +57,6 @@ class StarGalaxyTest {
     void class_shouldXPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("x");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("x property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("x property should not be final")
                     .isFalse();
@@ -75,9 +72,6 @@ class StarGalaxyTest {
     void class_shouldYPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("y");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("y property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("y property should not be final")
                     .isFalse();
@@ -93,9 +87,6 @@ class StarGalaxyTest {
     void class_shouldZPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("z");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("z property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("z property should not be final")
                     .isFalse();
@@ -111,9 +102,6 @@ class StarGalaxyTest {
     void class_shouldNamePropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("name");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("name property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("name property should not be final")
                     .isFalse();
@@ -521,6 +509,7 @@ class StarGalaxyTest {
             List<CelestialObject> res = (List<CelestialObject>) getCelestialObjects.invoke(galaxy);
 
             assertThat(res)
+                    .withFailMessage("List of celestials object should contains %s but was %s", List.of(halley, sirius, mars), res)
                     .containsExactly(halley, sirius, mars);
 
         } catch (IllegalAccessException | NoSuchMethodException | InstantiationException |

@@ -27,9 +27,6 @@ class StarStaticTest {
     void class_shouldXPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("x");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("x property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("x property should not be final")
                     .isFalse();
@@ -45,9 +42,6 @@ class StarStaticTest {
     void class_shouldYPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("y");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("y property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("y property should not be final")
                     .isFalse();
@@ -63,9 +57,6 @@ class StarStaticTest {
     void class_shouldZPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("z");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("z property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("z property should not be final")
                     .isFalse();
@@ -81,9 +72,6 @@ class StarStaticTest {
     void class_shouldNamePropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("name");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("name property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("name property should not be final")
                     .isFalse();
@@ -281,8 +269,12 @@ class StarStaticTest {
             double res = (double) getDistanceBetween.invoke(null, celestialObject1, celestialObject2);
             double resKm = (double) getDistanceBetweenInKm.invoke(null, celestialObject1, celestialObject2);
 
-            assertThat(res).isCloseTo(801.8149269477216, Offset.offset(1d));
-            assertThat(resKm).isCloseTo(1.2027223904215823E11, Offset.offset(1d));
+            assertThat(res)
+                    .withFailMessage("Distance computed between objects should be 801.8149269477216")
+                    .isCloseTo(801.8149269477216, Offset.offset(1d));
+            assertThat(resKm)
+                    .withFailMessage("Distance computed between objects should be 1.2027223904215823E11")
+                    .isCloseTo(1.2027223904215823E11, Offset.offset(1d));
 
 
         } catch (IllegalAccessException | NoSuchMethodException | InstantiationException |

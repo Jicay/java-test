@@ -38,9 +38,6 @@ class StarOverrideTest {
     void class_shouldXPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("x");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("x property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("x property should not be final")
                     .isFalse();
@@ -56,9 +53,6 @@ class StarOverrideTest {
     void class_shouldYPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("y");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("y property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("y property should not be final")
                     .isFalse();
@@ -74,9 +68,6 @@ class StarOverrideTest {
     void class_shouldZPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("z");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("z property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("z property should not be final")
                     .isFalse();
@@ -92,9 +83,6 @@ class StarOverrideTest {
     void class_shouldNamePropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("name");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("name property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("name property should not be final")
                     .isFalse();
@@ -360,17 +348,37 @@ class StarOverrideTest {
             Star star = constructor.newInstance();
             Star starFull = constructorFull.newInstance("Vega", 12.389, 48398.12, -123.843, 13.32);
 
-            assertThat(star.getMagnitude()).isEqualTo(0.0);
-            assertThat(star.getX()).isEqualTo(0.0);
-            assertThat(star.getY()).isEqualTo(0.0);
-            assertThat(star.getZ()).isEqualTo(0.0);
-            assertThat(star.getName()).isEqualTo("Soleil");
+            assertThat(star.getMagnitude())
+                    .withFailMessage("magnitude should be %f but was %f", 0.0, star.getMagnitude())
+                    .isEqualTo(0.0);
+            assertThat(star.getX())
+                    .withFailMessage("x should be %f but was %f", 0.0, star.getX())
+                    .isEqualTo(0.0);
+            assertThat(star.getY())
+                    .withFailMessage("y should be %f but was %f", 0.0, star.getY())
+                    .isEqualTo(0.0);
+            assertThat(star.getZ())
+                    .withFailMessage("z should be %f but was %f", 0.0, star.getZ())
+                    .isEqualTo(0.0);
+            assertThat(star.getName())
+                    .withFailMessage("name should be Soleil but was %s", star.getName())
+                    .isEqualTo("Soleil");
 
-            assertThat(starFull.getMagnitude()).isEqualTo(13.32);
-            assertThat(starFull.getX()).isEqualTo(12.389);
-            assertThat(starFull.getY()).isEqualTo(48398.12);
-            assertThat(starFull.getZ()).isEqualTo(-123.843);
-            assertThat(starFull.getName()).isEqualTo("Vega");
+            assertThat(starFull.getMagnitude())
+                    .withFailMessage("magnitude should be %f but was %f", 13.32, star.getMagnitude())
+                    .isEqualTo(13.32);
+            assertThat(starFull.getX())
+                    .withFailMessage("x should be %f but was %f", 12.389, star.getX())
+                    .isEqualTo(12.389);
+            assertThat(starFull.getY())
+                    .withFailMessage("y should be %f but was %f", 48398.12, star.getY())
+                    .isEqualTo(48398.12);
+            assertThat(starFull.getZ())
+                    .withFailMessage("z should be %f but was %f", -123.843, star.getZ())
+                    .isEqualTo(-123.843);
+            assertThat(starFull.getName())
+                    .withFailMessage("name should be Vega but was %s", star.getName())
+                    .isEqualTo("Vega");
 
         } catch (IllegalAccessException | NoSuchMethodException | InstantiationException |
                  InvocationTargetException e) {
@@ -424,17 +432,20 @@ class StarOverrideTest {
                     .withFailMessage("Two similar objects with Z different should have different hashCode")
                     .isFalse();
             assertThat(star1.equals(star6))
-                    .withFailMessage("Two similar objects with name different should not be equals").isFalse();
+                    .withFailMessage("Two similar objects with name different should not be equals")
+                    .isFalse();
             assertThat(star1.hashCode() == star6.hashCode())
                     .withFailMessage("Two similar objects with name different should have different hashCode")
                     .isFalse();
             assertThat(star1.equals(star7))
-                    .withFailMessage("Two similar objects with magnitude different should not be equals").isFalse();
+                    .withFailMessage("Two similar objects with magnitude different should not be equals")
+                    .isFalse();
             assertThat(star1.hashCode() == star7.hashCode())
                     .withFailMessage("Two similar objects with magnitude different should have different hashCode")
                     .isFalse();
             assertThat(star1.equals(celestialObject))
-                    .withFailMessage("Similar Star and CelestialObject should not be equals").isFalse();
+                    .withFailMessage("Similar Star and CelestialObject should not be equals")
+                    .isFalse();
             assertThat(star1.hashCode() == celestialObject.hashCode())
                     .withFailMessage("Similar Star and CelestialObject should have different hashCode")
                     .isFalse();
@@ -453,8 +464,12 @@ class StarOverrideTest {
             CelestialObject celestialObject = constructorCO.newInstance("Altair", 12.45, 328.8437, -328.3923);
             Star star = constructor.newInstance("Altair", 12.45, 328.8437, -328.3923, 13.92);
 
-            assertThat(celestialObject.toString()).isEqualTo("Altair is positioned at (12.450, 328.844, -328.392)");
-            assertThat(star.toString()).isEqualTo("Altair shines at the 13.920 magnitude");
+            assertThat(celestialObject.toString())
+                    .withFailMessage("toString of celestialObject is not correct : %s", celestialObject.toString())
+                    .isEqualTo("Altair is positioned at (12.450, 328.844, -328.392)");
+            assertThat(star.toString())
+                    .withFailMessage("toString of Star is not correct : %s", star.toString())
+                    .isEqualTo("Altair shines at the 13.920 magnitude");
 
         } catch (IllegalAccessException | NoSuchMethodException | InstantiationException |
                  InvocationTargetException e) {

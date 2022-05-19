@@ -2,10 +2,10 @@ import java.util.Objects;
 
 public class CelestialObject {
     public static final double KM_IN_ONE_AU = 150_000_000d;
-    private double x;
-    private double y;
-    private double z;
-    private String name;
+    public double x;
+    public double y;
+    public double z;
+    public String name;
     private int mass;
 
     public CelestialObject() {

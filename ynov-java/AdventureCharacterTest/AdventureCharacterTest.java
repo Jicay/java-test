@@ -309,8 +309,12 @@ class AdventureCharacterTest {
                     .isEqualTo("Legolas");
 
 
-            assertThat(legolas.toString()).isEqualTo("Legolas : 5/20");
-            assertThat(sephiroth.toString()).isEqualTo("Sephiroth : KO");
+            assertThat(legolas.toString())
+                    .withFailMessage("The toString message is not good : %s", legolas.toString())
+                    .isEqualTo("Legolas : 5/20");
+            assertThat(sephiroth.toString())
+                    .withFailMessage("The toString message is not good : %s", sephiroth.toString())
+                    .isEqualTo("Sephiroth : KO");
 
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             fail("Character is not correctly defined", e);

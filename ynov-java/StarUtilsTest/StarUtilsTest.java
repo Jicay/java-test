@@ -27,9 +27,6 @@ class StarUtilsTest {
     void class_shouldXPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("x");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("x property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("x property should not be final")
                     .isFalse();
@@ -45,9 +42,6 @@ class StarUtilsTest {
     void class_shouldYPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("y");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("y property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("y property should not be final")
                     .isFalse();
@@ -63,9 +57,6 @@ class StarUtilsTest {
     void class_shouldZPropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("z");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("z property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("z property should not be final")
                     .isFalse();
@@ -81,9 +72,6 @@ class StarUtilsTest {
     void class_shouldNamePropertyBePrivateAndWithCorrectType() {
         try {
             Field field = CelestialObject.class.getDeclaredField("name");
-            assertThat(Modifier.isPrivate(field.getModifiers()))
-                    .withFailMessage("name property should be private")
-                    .isTrue();
             assertThat(Modifier.isFinal(field.getModifiers()))
                     .withFailMessage("name property should not be final")
                     .isFalse();
@@ -275,8 +263,12 @@ class StarUtilsTest {
             CelestialObject celestialObject1 = constructor.newInstance("Altair", 12.45, 328.8437, -328.3923);
             CelestialObject celestialObject2 = constructor.newInstance("Vega", 489.3, -12.4737854, 218.43);
 
-            assertThat(celestialObject1.toString()).isEqualTo("Altair is positioned at (12.450, 328.844, -328.392)");
-            assertThat(celestialObject2.toString()).isEqualTo("Vega is positioned at (489.300, -12.474, 218.430)");
+            assertThat(celestialObject1.toString())
+                    .withFailMessage("toString of CelestialObject is not correct : %s", celestialObject1.toString())
+                    .isEqualTo("Altair is positioned at (12.450, 328.844, -328.392)");
+            assertThat(celestialObject2.toString())
+                    .withFailMessage("toString of CelestialObject is not correct : %s", celestialObject2.toString())
+                    .isEqualTo("Vega is positioned at (489.300, -12.474, 218.430)");
 
         } catch (IllegalAccessException | NoSuchMethodException | InstantiationException |
                  InvocationTargetException e) {

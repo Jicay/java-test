@@ -226,7 +226,9 @@ class AdventureMonsterTest {
             Method fight = Character.class.getDeclaredMethod("fight", Character.class, Character.class);
             String firstPrint = (String) printStatus.invoke(null);
 
-            assertThat(firstPrint).isEqualTo("""
+            assertThat(firstPrint)
+                    .withFailMessage("printStatus is not correct")
+                    .isEqualTo("""
                 ------------------------------------------
                 Nobody's fighting right now !
                 ------------------------------------------""");
@@ -235,16 +237,24 @@ class AdventureMonsterTest {
             Monster gobelin = constructor.newInstance("Gobelin", 30);
             Monster leviathan = constructor.newInstance("Leviathan", 10);
 
-            assertThat(gobelin.toString()).isEqualTo("Gobelin is a monster with 30 HP");
-            assertThat(leviathan.toString()).isEqualTo("Leviathan is a monster with 10 HP");
+            assertThat(gobelin.toString())
+                    .withFailMessage("Monster toString is not correct : %s", leviathan.toString())
+                    .isEqualTo("Gobelin is a monster with 30 HP");
+            assertThat(leviathan.toString())
+                    .withFailMessage("Monster toString is not correct : %s", leviathan.toString())
+                    .isEqualTo("Leviathan is a monster with 10 HP");
 
             fight.invoke(null, gobelin, leviathan);
 
-            assertThat(leviathan.toString()).isEqualTo("Leviathan is a monster and is dead");
+            assertThat(leviathan.toString())
+                    .withFailMessage("Monster toString is not correct : %s", leviathan.toString())
+                    .isEqualTo("Leviathan is a monster and is dead");
 
             String lastPrint = (String) printStatus.invoke(null);
 
-            assertThat(lastPrint).isEqualTo("""
+            assertThat(lastPrint)
+                    .withFailMessage("printStatus is not correct")
+                    .isEqualTo("""
                 ------------------------------------------
                 Characters currently fighting :
                  - Gobelin is a monster with 21 HP
